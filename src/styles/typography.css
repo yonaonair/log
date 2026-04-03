@@ -1,9 +1,8 @@
 @plugin "@tailwindcss/typography";
 
 @layer base {
-  /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
-    @apply prose;
+    @apply prose max-w-none prose-neutral dark:prose-invert;
 
     h1,
     h2,
@@ -56,11 +55,9 @@
       td {
         @apply border border-border p-2;
       }
-
       th {
         @apply py-1.5;
       }
-
       code {
         @apply break-all sm:break-normal;
       }
@@ -87,22 +84,57 @@
     }
 
     pre {
-      @apply focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-dashed;
+      @apply my-6 overflow-x-auto p-4 focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-dashed;
+    }
+
+    /* ===== Keystatic Custom Components ===== */
+    .callout {
+      @apply my-8 flex gap-4 rounded-xl border border-border bg-muted/30 p-4;
+    }
+    .callout-icon {
+      @apply text-xl select-none;
+    }
+    .callout-content {
+      @apply flex-1 text-sm leading-6;
+    }
+
+    .custom-image-container {
+      @apply my-10 flex flex-col items-center;
+    }
+    .custom-image-container img {
+      @apply mb-3 rounded-lg border border-border shadow-sm;
+    }
+    .custom-image-caption {
+      @apply text-center text-sm text-foreground/60 italic;
     }
   }
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+    @apply block border text-[0.875rem] outline-border; /* 텍스트 크기 일관성 확보 */
+    background-color: var(--shiki-light-bg) !important;
+    color: var(--shiki-light) !important;
+    line-height: 1.4 !important; /* [수정 핵심] 강제 여백 제거 및 줄간격 조밀하게 설정 */
+  }
+
+  .astro-code span {
+    color: var(--shiki-light) !important;
   }
 
   html[data-theme="dark"] .astro-code {
-    @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    background-color: var(--shiki-dark-bg) !important;
+    color: var(--shiki-dark) !important;
   }
 
-  /* Styles for Shiki transformers */
-  /* https://shiki.style/packages/transformers */
+  html[data-theme="dark"] .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
+
   .astro-code {
+    /* [수정 핵심] min-h 제거 및 inline-block을 통한 폰트 자체의 자연스러운 높이 유지 */
+    .line {
+      @apply inline-block min-h-[1.4em] w-full;
+    }
     .line.diff.add {
       @apply relative inline-block w-full bg-green-400/20 before:absolute before:-left-3 before:text-green-500 before:content-['+'];
     }
@@ -116,4 +148,56 @@
       @apply rounded-sm border border-border px-0.5 py-px;
     }
   }
+}
+
+/* [에디터 내부 순서 있는 목록(OL) 3단계 순환 스타일] */
+/* 1계층: 아라비아 숫자 (1.) */
+/* 2계층: 유니코드 특수기호 (❶) */
+/* 3계층: 괄호 숫자 ((1)) */
+
+/* 카운터 초기화 및 기본 여백 설정 */
+.editor-content ol {
+  list-style-type: none;
+  counter-reset: editor-list-counter;
+  padding-left: 20px;
+}
+
+/* 카운터 증가 및 가상 요소 위치 기준점 지정 */
+.editor-content ol li {
+  position: relative;
+  counter-increment: editor-list-counter;
+  margin-bottom: 4px;
+}
+
+/* 가상 요소 공통 절대 좌표 설정 */
+.editor-content ol li::before {
+  position: absolute;
+  left: -20px;
+}
+
+/* 1, 4, 7계층 마커 속성 */
+.editor-content ol li::before,
+.editor-content ol ol ol ol li::before {
+  content: counter(editor-list-counter) ". ";
+}
+
+/* 2계층 커스텀 기호 세트 정의 (유니코드 딩뱃) */
+@counter-style black-circled-editor {
+  system: fixed;
+  symbols: "\2776" "\2777" "\2778" "\2779" "\277A" "\277B" "\277C" "\277D"
+    "\277E" "\277F";
+  suffix: " ";
+  fallback: decimal;
+}
+
+/* 2, 5, 8계층 마커 속성 */
+.editor-content ol ol li::before,
+.editor-content ol ol ol ol ol li::before {
+  content: counter(editor-list-counter, black-circled-editor);
+}
+
+/* 3, 6, 9계층 마커 속성 */
+.editor-content ol ol ol li::before,
+.editor-content ol ol ol ol ol ol li::before {
+  content: "(" counter(editor-list-counter) ")";
 }

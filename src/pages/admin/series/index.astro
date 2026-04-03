@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+import SeriesList from "@/components/admin/SeriesList";
+---
+
+<AdminLayout title="시리즈별 보기" active="series">
+  <SeriesList client:load />
+</AdminLayout>

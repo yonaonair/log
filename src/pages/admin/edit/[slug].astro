@@ -1,0 +1,65 @@
+---
+import Editor from "@/components/admin/Editor";
+import fs from "node:fs/promises";
+import path from "node:path";
+import matter from "gray-matter";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/admin");
+
+const BLOG_DIR = path.resolve("src/data/blog");
+
+async function findFile(s: string, dir = BLOG_DIR): Promise<string | null> {
+  for (const ext of [".md", ".mdx"]) {
+    const p = path.join(dir, `${s}${ext}`);
+    try { await fs.access(p); return p; } catch {}
+  }
+  // Search subdirectories
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const found = await findFile(s, path.join(dir, entry.name));
+        if (found) return found;
+      }
+    }
+  } catch {}
+  return null;
+}
+
+const filePath = await findFile(slug);
+if (!filePath) return Astro.redirect("/admin");
+
+const raw = await fs.readFile(filePath, "utf-8");
+const { data, content } = matter(raw);
+
+const initialMeta = {
+  title: data.title ?? "",
+  slug: data.slug ?? slug,
+  description: data.description ?? "",
+  tags: data.tags ?? [],
+  featured: data.featured ?? false,
+  draft: data.draft ?? false,
+  pubDatetime: data.pubDatetime ? new Date(data.pubDatetime).toISOString() : new Date().toISOString(),
+  author: data.author ?? "",
+};
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{initialMeta.title || "글 편집"}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/admin.css" />
+  </head>
+  <body class="admin-body editor-page">
+    <Editor
+      client:load
+      isNew={false}
+      initialContent={content}
+      initialMeta={initialMeta}
+    />
+  </body>
+</html>

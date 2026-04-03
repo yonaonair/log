@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm show:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm install:*)",
+      "Bash(node -e \"const m = require\\('@keystatic/core/content-components'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const f = require\\('@keystatic/core'\\); console.log\\(Object.keys\\(f.fields\\)\\)\")",
+      "Bash(grep -E \"\\\\.\\(ts|tsx|astro|md|json\\)$\")",
+      "Bash(npm uninstall:*)",
+      "Bash(npx astro:*)",
+      "Bash(node -e \"const m = require\\('@tiptap/react'\\); console.log\\(Object.keys\\(m\\).filter\\(k=>k.toLowerCase\\(\\).includes\\('bubble'\\)||k.toLowerCase\\(\\).includes\\('float'\\)\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/react'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-table'\\); console.log\\(Object.keys\\(m\\).slice\\(0,10\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-text-style'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"try{const m=require\\('@tiptap/extension-bubble-menu'\\);console.log\\('bubble-menu ok',Object.keys\\(m\\).slice\\(0,3\\)\\)}catch\\(e\\){console.log\\('no bubble-menu package'\\)}\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-text-style'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/starter-kit'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('tiptap-markdown'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-character-count'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('tiptap-markdown'\\); console.log\\(m\\)\")",
+      "Bash(node -e \"import\\('tiptap-markdown'\\).then\\(m=>console.log\\(Object.keys\\(m\\)\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-highlight'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-placeholder'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-underline'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-code-block-lowlight'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-link'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-image'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-bubble-menu'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-character-count'\\); const cc = m.CharacterCount; const ext = cc.configure\\(\\); console.log\\(Object.keys\\(ext.storage || {}\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/suggestion'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const {Table} = require\\('@tiptap/extension-table'\\); const t = Table.configure\\(\\); console.log\\(Object.keys\\(t.options || {}\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const m = require\\('@tiptap/extension-table'\\); const cmds = Object.keys\\(m\\).filter\\(k=>k.toLowerCase\\(\\).includes\\('row'\\)||k.toLowerCase\\(\\).includes\\('col'\\)||k.toLowerCase\\(\\).includes\\('table'\\)||k.toLowerCase\\(\\).includes\\('cell'\\)||k.toLowerCase\\(\\).includes\\('merge'\\)\\); console.log\\(cmds\\)\")"
+    ]
+  }
+}

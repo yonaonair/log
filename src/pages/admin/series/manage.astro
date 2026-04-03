@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+import SeriesManage from "@/components/admin/SeriesManage";
+---
+
+<AdminLayout title="시리즈 관리" active="series-manage">
+  <SeriesManage client:load />
+</AdminLayout>

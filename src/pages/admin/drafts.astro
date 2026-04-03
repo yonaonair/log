@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+import PostList from "@/components/admin/PostList";
+---
+
+<AdminLayout title="임시저장" active="drafts">
+  <PostList client:load filterDraft={true} />
+</AdminLayout>

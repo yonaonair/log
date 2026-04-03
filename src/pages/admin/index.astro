@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+import PostList from "@/components/admin/PostList";
+---
+
+<AdminLayout title="전체 글" active="posts">
+  <PostList client:load />
+</AdminLayout>

@@ -10,19 +10,26 @@ import {
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { SITE } from "./src/config";
+import node from "@astrojs/node";
+import react from "@astrojs/react";
+import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
+  output: "server",
+  devToolbar: { enabled: false },
+  adapter: node({ mode: "middleware" }),
   integrations: [
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
+    react({}),
+    mdx(),
   ],
   markdown: {
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
     shikiConfig: {
-      // For more themes, visit https://shiki.style/themes
       themes: { light: "min-light", dark: "night-owl" },
       defaultColor: false,
       wrap: false,
@@ -35,11 +42,38 @@ export default defineConfig({
     },
   },
   vite: {
-    // eslint-disable-next-line
-    // @ts-ignore
-    // This will be fixed in Astro 6 with Vite 7 support
-    // See: https://github.com/withastro/astro/issues/14030
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        name: "keystatic-rolldown-compat",
+        enforce: "pre",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        configResolved(config: any) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const allPlugins: any[] = config.plugins ?? [];
+
+          for (const plugin of allPlugins) {
+            if (!plugin?.name?.includes("keystatic")) continue;
+            if (!plugin.resolveId) continue;
+            const orig = plugin.resolveId;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            plugin.resolveId = async function (this: unknown, ...args: any[]) {
+              const fn = typeof orig === "function" ? orig : orig.handler;
+              const result = await fn.call(this, ...args);
+              if (
+                result &&
+                typeof result === "object" &&
+                typeof result.id === "string"
+              ) {
+                return result.id;
+              }
+              return result;
+            };
+          }
+        },
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any,
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },

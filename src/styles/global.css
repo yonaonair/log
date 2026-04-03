@@ -1,27 +1,42 @@
+@import url("https://rsms.me/inter/inter.css");
 @import "tailwindcss";
 @import "./typography.css";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+:root {
+  --font-inter:
+    "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+}
+
 :root,
 html[data-theme="light"] {
   --background: #fdfdfd;
-  --foreground: #282728;
+  --foreground: #1d1d1f;
   --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+  --muted: #f5f5f7;
+  --border: #d2d2d7;
+
+  /* Shiki Light Theme 변수 */
+  --shiki-light-bg: #f9f9fb;
+  --shiki-light: #24292e;
 }
 
 html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60;
-  --border: #ab4b08;
+  --background: #161617;
+  --foreground: #f5f5f7;
+  --accent: #0a84ff;
+  --muted: #2c2c2e;
+  --border: #424245;
+
+  /* Shiki Dark Theme 변수 */
+  --shiki-dark-bg: #1e1e1e;
+  --shiki-dark: #e1e4e8;
 }
 
 @theme inline {
-  --font-app: var(--font-google-sans-code);
+  --font-app: var(--font-inter);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
@@ -32,22 +47,26 @@ html[data-theme="dark"] {
 @layer base {
   * {
     @apply border-border outline-accent/75;
-    scrollbar-width: auto;
-    scrollbar-color: var(--color-muted) transparent;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
   }
   html {
     @apply overflow-y-scroll scroll-smooth;
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   body {
-    @apply flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/75 selection:text-background;
+    @apply flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/30;
+    letter-spacing: -0.011em;
+    line-height: 1.6;
   }
-  a,
-  button {
-    @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
+  code,
+  pre {
+    font-family:
+      "SFMono-Regular", ui-monospace, "SF Mono", Menlo, Monaco, Consolas,
+      monospace;
   }
 }
 
@@ -56,15 +75,59 @@ html[data-theme="dark"] {
 }
 
 @utility app-layout {
-  @apply mx-auto w-full max-w-app px-4;
+  @apply mx-auto w-full max-w-app px-6;
 }
 
 .active-nav {
-  @apply underline decoration-wavy decoration-2 underline-offset-8;
+  @apply font-semibold text-accent;
 }
 
-/* Source: https://piccalil.li/blog/a-more-modern-css-reset/ */
-/* Anything that has been anchored to should have extra scroll margin */
-:target {
-  scroll-margin-block: 1rem;
+/* admin 화면에서 수정 */
+.editor-header-right .btn-publish,
+.editor-header-right .btn-save {
+  width: auto !important;
+  min-width: unset !important;
+  max-width: none !important;
+}
+
+.switch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  display: inline-block;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch .slider {
+  position: absolute;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 999px;
+  transition: 0.25s;
+}
+
+.switch .slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.switch input:checked + .slider {
+  background: #6366f1;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(18px);
 }
