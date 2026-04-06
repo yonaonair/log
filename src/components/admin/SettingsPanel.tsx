@@ -141,8 +141,19 @@ function SocialsTab() {
   const remove = (i: number) => setItems(prev => prev.filter((_, idx) => idx !== i));
   const add = () => setItems(prev => [...prev, { name: "GitHub", href: "", active: true }]);
 
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    const normalized = items.map(item => ({
+      ...item,
+      href: item.name === "Mail" && item.href && !item.href.startsWith("mailto:")
+        ? `mailto:${item.href}`
+        : item.href,
+    }));
+    save(normalized);
+  };
+
   return (
-    <form onSubmit={e => { e.preventDefault(); save(items); }}>
+    <form onSubmit={handleSave}>
       <div className="socials-list">
         {items.map((item, i) => (
           <div key={i} className="social-row">
@@ -150,9 +161,12 @@ function SocialsTab() {
               {SOCIAL_PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
             <input
-              placeholder="URL"
-              value={item.href}
-              onChange={e => update(i, { href: e.target.value })}
+              placeholder={item.name === "Mail" ? "이메일 주소 또는 mailto:..." : "URL"}
+              value={item.name === "Mail" ? item.href.replace(/^mailto:/, "") : item.href}
+              onChange={e => {
+                const raw = e.target.value;
+                update(i, { href: raw });
+              }}
               style={{ flex: 1 }}
             />
             <label className="social-toggle">
