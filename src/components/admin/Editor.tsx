@@ -1128,7 +1128,7 @@ export default function Editor({
                       gap: "6px",
                     }}
                   >
-                    #{tag}
+                    {tag}
                     <button
                       type="button"
                       onClick={() => removeTag(tag)}
@@ -1242,7 +1242,7 @@ export default function Editor({
           <textarea
             ref={titleRef}
             className="title-input"
-            placeholder="Article title"
+            placeholder="제목을 입력하세요"
             value={meta.title}
             onChange={handleTitleChange}
             rows={1}
@@ -1250,7 +1250,7 @@ export default function Editor({
           {meta.slug && <div className="slug-preview">/{meta.slug}</div>}
           <input
             className="subtitle-input"
-            placeholder="Add a subtitle"
+            placeholder="한 줄 소개"
             value={meta.description}
             onChange={e =>
               setMeta(m => ({ ...m, description: e.target.value }))

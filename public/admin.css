@@ -1647,7 +1647,7 @@
 .about-editor-textarea {
   width: 100%; padding: 14px 16px;
   border: 1.5px solid #e8e8e8; border-radius: 8px;
-  font-size: 13px; font-family: "Google Sans Code", monospace;
+  font-size: 13px; font-family: 'Orbit', monospace;
   color: #111; background: #fff; resize: vertical; line-height: 1.7;
   transition: border-color .15s;
 }

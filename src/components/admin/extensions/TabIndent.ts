@@ -9,7 +9,7 @@ export const TabIndent = Extension.create({
         if (editor.isActive("listItem")) {
           return editor.commands.sinkListItem("listItem");
         }
-        return editor.commands.insertContent("\u00a0\u00a0\u00a0\u00a0");
+        return editor.commands.insertContent("    ");
       },
       "Shift-Tab": ({ editor }) => {
         if (editor.isActive("listItem")) {

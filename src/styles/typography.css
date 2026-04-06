@@ -201,3 +201,50 @@
 .editor-content ol ol ol ol ol ol li::before {
   content: "(" counter(editor-list-counter) ")";
 }
+
+/* 카운터 초기화 및 기본 여백 설정 */
+.editor-content ol {
+  list-style-type: none;
+  counter-reset: editor-list-counter;
+  padding-left: 20px;
+}
+
+/* 카운터 증가 및 가상 요소 위치 기준점 지정 */
+.editor-content ol li {
+  position: relative;
+  counter-increment: editor-list-counter;
+  margin-bottom: 4px;
+}
+
+/* 가상 요소 공통 절대 좌표 설정 */
+.editor-content ol li::before {
+  position: absolute;
+  left: -20px;
+}
+
+/* 1, 4, 7계층 마커 속성 */
+.editor-content ol li::before,
+.editor-content ol ol ol ol li::before {
+  content: counter(editor-list-counter) ". ";
+}
+
+/* 2계층 커스텀 기호 세트 정의 (유니코드 딩뱃) */
+@counter-style black-circled-editor {
+  system: fixed;
+  symbols: "\2776" "\2777" "\2778" "\2779" "\277A" "\277B" "\277C" "\277D"
+    "\277E" "\277F";
+  suffix: " ";
+  fallback: decimal;
+}
+
+/* 2, 5, 8계층 마커 속성 */
+.editor-content ol ol li::before,
+.editor-content ol ol ol ol ol li::before {
+  content: counter(editor-list-counter, black-circled-editor);
+}
+
+/* 3, 6, 9계층 마커 속성 */
+.editor-content ol ol ol li::before,
+.editor-content ol ol ol ol ol ol li::before {
+  content: "(" counter(editor-list-counter) ")";
+}

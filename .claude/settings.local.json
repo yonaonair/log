@@ -35,7 +35,8 @@
       "Bash(echo \"EXIT:$?\")",
       "Bash(npx eslint:*)",
       "Bash(npm run:*)",
-      "Bash(npm config:*)"
+      "Bash(npm config:*)",
+      "Bash(git:*)"
     ]
   }
 }
