@@ -1531,6 +1531,120 @@
 .wiki-link::before { content: "[["; opacity: .4; font-size: .85em; }
 .wiki-link::after  { content: "]]"; opacity: .4; font-size: .85em; }
 
+/* ─── Settings Panel ───────────────────────────────────────────────────────── */
+.settings-panel { width: 100%; }
+
+.settings-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid #ebebeb;
+  margin-bottom: 28px;
+}
+.settings-tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #888;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .12s, border-color .12s;
+  margin-bottom: -1px;
+}
+.settings-tab:hover { color: #333; }
+.settings-tab.active { color: #111; border-bottom-color: #111; }
+
+.settings-body { padding-top: 4px; }
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+.settings-field { display: flex; flex-direction: column; gap: 6px; }
+.settings-field.full { grid-column: 1 / -1; }
+.settings-label { font-size: 12px; font-weight: 500; color: #666; }
+.settings-field input,
+.settings-field textarea,
+.settings-field select {
+  padding: 8px 10px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 7px;
+  font-size: 13px;
+  background: #fff;
+  color: #111;
+  transition: border-color .15s;
+  font-family: inherit;
+  resize: vertical;
+}
+.settings-field input:focus,
+.settings-field textarea:focus,
+.settings-field select:focus { outline: none; border-color: #bbb; }
+
+.settings-actions { display: flex; justify-content: flex-end; padding-top: 8px; }
+.settings-loading { color: #aaa; font-size: 13px; padding: 24px 0; }
+
+/* Toggle switch */
+.toggle-switch { display: inline-flex; align-items: center; cursor: pointer; }
+.toggle-switch input { display: none; }
+.toggle-track {
+  width: 36px; height: 20px;
+  background: #ddd; border-radius: 10px;
+  position: relative; transition: background .15s;
+}
+.toggle-switch input:checked + .toggle-track { background: #111; }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; transition: left .15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.toggle-switch input:checked + .toggle-track .toggle-thumb { left: 19px; }
+
+/* Socials editor */
+.socials-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.social-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border: 1.5px solid #e8e8e8; border-radius: 8px;
+  background: #fafafa;
+}
+.social-row select {
+  padding: 5px 8px; border: 1.5px solid #e8e8e8; border-radius: 6px;
+  font-size: 13px; background: #fff; color: #111; min-width: 110px;
+}
+.social-row input {
+  flex: 1; padding: 5px 8px; border: 1.5px solid #e8e8e8; border-radius: 6px;
+  font-size: 13px; background: #fff; color: #111;
+}
+.social-row input:focus, .social-row select:focus { outline: none; border-color: #bbb; }
+.social-toggle { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #666; cursor: pointer; white-space: nowrap; }
+.social-toggle input[type="checkbox"] { accent-color: #111; }
+.btn-add-social {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; font-size: 13px; color: #555;
+  background: none; border: 1.5px dashed #ddd; border-radius: 7px;
+  cursor: pointer; transition: border-color .12s, color .12s;
+  align-self: flex-start;
+}
+.btn-add-social:hover { border-color: #999; color: #111; }
+
+/* About editor */
+.about-editor { display: flex; flex-direction: column; gap: 12px; }
+.about-editor-note {
+  font-size: 12px; color: #999; background: #fafafa;
+  border: 1px solid #ebebeb; border-radius: 7px; padding: 8px 12px;
+}
+.about-editor-textarea {
+  width: 100%; padding: 14px 16px;
+  border: 1.5px solid #e8e8e8; border-radius: 8px;
+  font-size: 13px; font-family: "Google Sans Code", monospace;
+  color: #111; background: #fff; resize: vertical; line-height: 1.7;
+  transition: border-color .15s;
+}
+.about-editor-textarea:focus { outline: none; border-color: #bbb; }
+
 /* ─── Utilities ────────────────────────────────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin .8s linear infinite; }

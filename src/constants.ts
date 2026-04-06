@@ -8,6 +8,7 @@ import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconTelegram from "@/assets/icons/IconTelegram.svg";
 import IconPinterest from "@/assets/icons/IconPinterest.svg";
 import { SITE } from "@/config";
+import socialsData from "@/data/config/socials.json";
 
 interface Social {
   name: string;
@@ -16,32 +17,36 @@ interface Social {
   icon: (_props: Props) => Element;
 }
 
-export const SOCIALS: Social[] = [
-  {
-    name: "GitHub",
-    href: "https://github.com/satnaing/astro-paper",
-    linkTitle: `${SITE.title} on GitHub`,
-    icon: IconGitHub,
-  },
-  {
-    name: "X",
-    href: "https://x.com/username",
-    linkTitle: `${SITE.title} on X`,
-    icon: IconBrandX,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/username/",
-    linkTitle: `${SITE.title} on LinkedIn`,
-    icon: IconLinkedin,
-  },
-  {
-    name: "Mail",
-    href: "mailto:yourmail@gmail.com",
-    linkTitle: `Send an email to ${SITE.title}`,
-    icon: IconMail,
-  },
-] as const;
+const ICON_MAP: Record<string, (_props: Props) => Element> = {
+  GitHub: IconGitHub,
+  X: IconBrandX,
+  LinkedIn: IconLinkedin,
+  Mail: IconMail,
+  WhatsApp: IconWhatsapp,
+  Facebook: IconFacebook,
+  Telegram: IconTelegram,
+  Pinterest: IconPinterest,
+};
+
+const TITLE_MAP: Record<string, string> = {
+  GitHub: `${SITE.title} on GitHub`,
+  X: `${SITE.title} on X`,
+  LinkedIn: `${SITE.title} on LinkedIn`,
+  Mail: `Send an email to ${SITE.title}`,
+  WhatsApp: `Share via WhatsApp`,
+  Facebook: `${SITE.title} on Facebook`,
+  Telegram: `${SITE.title} on Telegram`,
+  Pinterest: `${SITE.title} on Pinterest`,
+};
+
+export const SOCIALS: Social[] = socialsData
+  .filter(s => s.active)
+  .map(s => ({
+    name: s.name,
+    href: s.href,
+    linkTitle: TITLE_MAP[s.name] ?? s.name,
+    icon: ICON_MAP[s.name],
+  }));
 
 export const SHARE_LINKS: Social[] = [
   {

@@ -1,0 +1,6 @@
+[
+  { "name": "GitHub", "href": "https://github.com/satnaing/astro-paper", "active": true },
+  { "name": "X", "href": "https://x.com/username", "active": true },
+  { "name": "LinkedIn", "href": "https://www.linkedin.com/in/username/", "active": false },
+  { "name": "Mail", "href": "mailto:yourmail@gmail.com", "active": true }
+]

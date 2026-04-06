@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
-  FileText, PenLine, Layers, Settings2, Plus, ChevronLeft, ChevronRight, ChevronDown, ExternalLink, LogOut,
+  FileText, PenLine, Layers, Settings2, Plus, ChevronLeft, ChevronRight, ChevronDown, ExternalLink, LogOut, SlidersHorizontal, UserRound,
 } from "lucide-react";
 
 interface Props {
-  active?: "posts" | "drafts" | "series" | "series-manage";
+  active?: "posts" | "drafts" | "series" | "series-manage" | "settings" | "about";
 }
 
 export default function AdminSidebar({ active }: Props) {
@@ -94,6 +94,13 @@ export default function AdminSidebar({ active }: Props) {
               <span className="sidebar-link-icon"><Settings2 size={15} /></span>
             </a>
           )}
+        </div>
+
+        {/* 설정 섹션 */}
+        <div style={{ marginTop: collapsed ? 8 : 14 }}>
+          {!collapsed && <div className="sidebar-section-label">설정</div>}
+          {link("/admin/settings", <SlidersHorizontal size={15} />, "사이트 설정", active === "settings")}
+          {link("/admin/about", <UserRound size={15} />, "소개 편집", active === "about")}
         </div>
       </nav>
 

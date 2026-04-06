@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+import SettingsPanel from "@/components/admin/SettingsPanel";
+---
+
+<AdminLayout title="사이트 설정" active="settings">
+  <SettingsPanel client:load />
+</AdminLayout>
