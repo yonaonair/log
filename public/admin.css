@@ -3,7 +3,7 @@
 
 .admin-body {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
-  background: #f7f7f7;
+  background: #fff;
   color: #1a1a1a;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -17,6 +17,8 @@
 .admin-app {
   display: flex;
   min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .admin-sidebar {
@@ -84,7 +86,8 @@
 .admin-content {
   flex: 1;
   padding: 40px 48px;
-  max-width: 900px;
+  max-width: 780px;
+  margin: 0 auto;
 }
 
 .admin-page-header h1 {
@@ -261,6 +264,9 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* ─── Editor Header / Top Bar ──────────────────────────────────────────────── */
@@ -298,7 +304,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 200px;
   justify-content: flex-end;
 }
 

@@ -33,6 +33,20 @@ import { Annotation } from "./extensions/Annotation";
 import { WikiLink } from "./extensions/WikiLink";
 import { TabIndent } from "./extensions/TabIndent";
 import type { Editor as TiptapEditor } from "@tiptap/core";
+
+// ─── Local types ─────────────────────────────────────────────────────────────
+interface SlashRenderProps {
+  items: SlashCommandItem[];
+  range: { from: number; to: number };
+  command: (item: SlashCommandItem) => void;
+}
+interface SlashCommandArg {
+  editor: TiptapEditor;
+  range: { from: number; to: number };
+  props: SlashCommandItem;
+}
+type MarkdownStorage = { markdown?: { getMarkdown?: () => string } };
+type CharCountStorage = { characterCount?: { words?: () => number } };
 import {
   Bold as BoldIcon,
   Italic as ItalicIcon,
@@ -276,7 +290,9 @@ export default function Editor({
 
   const [showMore, setShowMore] = useState(false);
   const titleRef = useRef<HTMLTextAreaElement>(null);
-  const autoSaveTimer = useRef<any>(undefined);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const slashSelectRef = useRef<((item: SlashCommandItem) => void) | null>(
     null
   );
@@ -338,7 +354,7 @@ export default function Editor({
           },
           render: () => {
             return {
-              onStart: (props: any) => {
+              onStart: (props: SlashRenderProps) => {
                 slashIndexRef.current = 0;
                 slashItemsRef.current = props.items;
                 slashSelectRef.current = (item: SlashCommandItem) =>
@@ -350,7 +366,7 @@ export default function Editor({
                   range: props.range,
                 });
               },
-              onUpdate: (props: any) => {
+              onUpdate: (props: SlashRenderProps) => {
                 slashIndexRef.current = 0;
                 slashItemsRef.current = props.items;
                 slashSelectRef.current = (item: SlashCommandItem) =>
@@ -396,7 +412,7 @@ export default function Editor({
               },
             };
           },
-          command: ({ editor: ed, range, props }: any) => {
+          command: ({ editor: ed, range, props }: SlashCommandArg) => {
             ed.chain().focus().deleteRange(range).run();
             props.command(ed);
             setSlashState(s => ({ ...s, show: false }));
@@ -427,7 +443,8 @@ export default function Editor({
       if (!editor) return;
       setSaveState("saving");
       const content =
-        (editor.storage as any).markdown?.getMarkdown?.() ?? editor.getText();
+        (editor.storage as MarkdownStorage).markdown?.getMarkdown?.() ??
+        editor.getText();
       const payload = {
         ...meta,
         draft: publish ? false : meta.draft,
@@ -472,7 +489,8 @@ export default function Editor({
       clearTimeout(autoSaveTimer.current);
       autoSaveTimer.current = setTimeout(async () => {
         const content =
-          (editor.storage as any).markdown?.getMarkdown?.() ?? editor.getText();
+          (editor.storage as MarkdownStorage).markdown?.getMarkdown?.() ??
+          editor.getText();
         const payload = { ...meta, content, newSlug: meta.slug };
         const res = await fetch(
           `/api/admin/posts/${initialMeta?.slug ?? meta.slug}`,
@@ -540,7 +558,8 @@ export default function Editor({
     setTagInput("");
   };
 
-  const wordCount = (editor?.storage as any)?.characterCount?.words?.() ?? 0;
+  const wordCount =
+    (editor?.storage as CharCountStorage)?.characterCount?.words?.() ?? 0;
 
   return (
     <div

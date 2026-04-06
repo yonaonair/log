@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import { ghGetSHA, ghPutFile, ghDeleteFile, toRepoPath } from "../../../../utils/github";
 
 const BLOG_DIR = path.resolve("src/data/blog");
 
@@ -67,10 +68,20 @@ export const PUT: APIRoute = async ({ params, request }) => {
   if (series) frontmatter.series = series;
 
   const fileContent = matter.stringify(content ?? "", frontmatter);
-  await fs.writeFile(targetPath, fileContent, "utf-8");
+  const newRepoPath = `src/data/blog/${targetSlug}.md`;
 
-  if (existingPath && existingPath !== targetPath) {
-    await fs.unlink(existingPath);
+  if (slug !== targetSlug) {
+    // slug 변경: 새 파일 생성 후 기존 파일 삭제
+    await ghPutFile(newRepoPath, fileContent, `post: rename ${slug} → ${targetSlug}`);
+    if (existingPath) {
+      const oldRepoPath = toRepoPath(existingPath);
+      const oldSHA = await ghGetSHA(oldRepoPath);
+      if (oldSHA) await ghDeleteFile(oldRepoPath, oldSHA, `post: remove ${slug} (renamed)`);
+    }
+  } else {
+    const repoPath = existingPath ? toRepoPath(existingPath) : newRepoPath;
+    const sha = await ghGetSHA(repoPath);
+    await ghPutFile(repoPath, fileContent, `post: update ${slug}`, sha ?? undefined);
   }
 
   return new Response(JSON.stringify({ slug: targetSlug }), {
@@ -85,7 +96,11 @@ export const DELETE: APIRoute = async ({ params }) => {
   const filePath = await findFile(slug);
   if (!filePath) return new Response("not found", { status: 404 });
 
-  await fs.unlink(filePath);
+  const repoPath = toRepoPath(filePath);
+  const sha = await ghGetSHA(repoPath);
+  if (!sha) return new Response("not found on GitHub", { status: 404 });
+  await ghDeleteFile(repoPath, sha, `post: delete ${slug}`);
+
   return new Response(JSON.stringify({ ok: true }), {
     headers: { "Content-Type": "application/json" },
   });

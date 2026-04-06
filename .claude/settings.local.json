@@ -30,7 +30,12 @@
       "Bash(node -e \"const m = require\\('@tiptap/extension-character-count'\\); const cc = m.CharacterCount; const ext = cc.configure\\(\\); console.log\\(Object.keys\\(ext.storage || {}\\)\\)\")",
       "Bash(node -e \"const m = require\\('@tiptap/suggestion'\\); console.log\\(Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
       "Bash(node -e \"const {Table} = require\\('@tiptap/extension-table'\\); const t = Table.configure\\(\\); console.log\\(Object.keys\\(t.options || {}\\).slice\\(0,5\\)\\)\")",
-      "Bash(node -e \"const m = require\\('@tiptap/extension-table'\\); const cmds = Object.keys\\(m\\).filter\\(k=>k.toLowerCase\\(\\).includes\\('row'\\)||k.toLowerCase\\(\\).includes\\('col'\\)||k.toLowerCase\\(\\).includes\\('table'\\)||k.toLowerCase\\(\\).includes\\('cell'\\)||k.toLowerCase\\(\\).includes\\('merge'\\)\\); console.log\\(cmds\\)\")"
+      "Bash(node -e \"const m = require\\('@tiptap/extension-table'\\); const cmds = Object.keys\\(m\\).filter\\(k=>k.toLowerCase\\(\\).includes\\('row'\\)||k.toLowerCase\\(\\).includes\\('col'\\)||k.toLowerCase\\(\\).includes\\('table'\\)||k.toLowerCase\\(\\).includes\\('cell'\\)||k.toLowerCase\\(\\).includes\\('merge'\\)\\); console.log\\(cmds\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npx eslint:*)",
+      "Bash(npm run:*)",
+      "Bash(npm config:*)"
     ]
   }
 }

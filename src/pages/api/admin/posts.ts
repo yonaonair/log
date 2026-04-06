@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import { ghGetSHA, ghPutFile } from "../../../utils/github";
 
 const BLOG_DIR = path.resolve("src/data/blog");
 
@@ -61,9 +62,9 @@ export const POST: APIRoute = async ({ request }) => {
   if (series) frontmatter.series = series;
 
   const fileContent = matter.stringify(content ?? "", frontmatter);
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
-
-  await fs.writeFile(filePath, fileContent, "utf-8");
+  const repoPath = `src/data/blog/${slug}.md`;
+  const existingSHA = await ghGetSHA(repoPath);
+  await ghPutFile(repoPath, fileContent, `post: ${existingSHA ? "update" : "add"} ${slug}`, existingSHA ?? undefined);
 
   return new Response(JSON.stringify({ slug }), {
     headers: { "Content-Type": "application/json" },
