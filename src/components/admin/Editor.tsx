@@ -288,6 +288,7 @@ export default function Editor({
     "idle" | "pending" | "saved"
   >("idle");
 
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   const [showMore, setShowMore] = useState(false);
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -464,10 +465,21 @@ export default function Editor({
         if (!res.ok) throw new Error();
         if (publish) setMeta(m => ({ ...m, draft: false }));
         setSaveState("saved");
-        setTimeout(() => setSaveState("idle"), 2500);
+        const toastMsg = isNew
+          ? "글이 저장됐어요. 편집 페이지로 이동합니다."
+          : publish
+          ? (meta.draft ? "발행됐어요!" : "업데이트됐어요!")
+          : "저장됐어요!";
+        setToast({ msg: toastMsg, type: "success" });
+        if (isNew) {
+          setTimeout(() => { window.location.href = `/admin/edit/${meta.slug}`; }, 1500);
+        } else {
+          setTimeout(() => { setSaveState("idle"); setToast(null); }, 3000);
+        }
       } catch {
         setSaveState("error");
-        setTimeout(() => setSaveState("idle"), 3000);
+        setToast({ msg: "저장에 실패했어요. 다시 시도해주세요.", type: "error" });
+        setTimeout(() => { setSaveState("idle"); setToast(null); }, 4000);
       }
     },
     [editor, meta, isNew, initialMeta?.slug]
@@ -574,6 +586,14 @@ export default function Editor({
       }}
       onDragOver={e => e.preventDefault()}
     >
+      {/* ── Toast ───────────────────────────────────────────── */}
+      {toast && (
+        <div className={`editor-toast editor-toast--${toast.type}`}>
+          {toast.type === "success" ? <Check size={15} /> : <X size={15} />}
+          {toast.msg}
+        </div>
+      )}
+
       {/* ── Top Bar ─────────────────────────────────────────── */}
       <header className="editor-header">
         <div className="editor-header-left">
@@ -608,6 +628,9 @@ export default function Editor({
                 <Check size={14} style={{ color: "#bbb" }} /> 자동저장
               </>
             )}
+          </span>
+          <span className={`editor-mode-badge ${isNew ? "editor-mode-badge--new" : ""}`}>
+            {isNew ? "새 글" : (meta.slug || "편집 중")}
           </span>
         </div>
 
