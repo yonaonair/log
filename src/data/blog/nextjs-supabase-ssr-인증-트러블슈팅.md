@@ -1,15 +1,14 @@
 ---
-title: Next.js + Supabase SSR 인증 트러블슈팅
+title: Next.js + Supabase SSR 인증 트러블슈팅(1)
 description: 무한 리디렉션이라니
 pubDatetime: 2026-03-11T04:20:00.000Z
-modDatetime: 2026-04-06T08:46:33.950Z
+modDatetime: 2026-04-06T08:49:09.207Z
 slug: nextjs-supabase-ssr-인증-트러블슈팅
 featured: false
 draft: false
 tags:
   - next.js
   - supabase
-series: trouble shooting
 ---
 # Next.js + Supabase SSR 인증 트러블슈팅
 
@@ -167,8 +166,8 @@ Redirect URLs: http://localhost:3000/api/auth/callback
 
 | 문제 | 결과 | 해결 |
 | --- | --- | --- |
-| `app/layout.tsx`<span>에 인증 체크</span> | `/login`<span>도 redirect 대상이 되어 루프</span> | `(dashboard)/layout.tsx`<span>로 이동</span> |
-| <span>middleware에서 redirect</span> | `/login`<span> 접근 시 루프</span> | <span>middleware는 세션 갱신만</span> |
-| `router.push("/tasks")`<span> 로 로그인 후 이동</span> | <span>서버가 세션 쿠키 못 읽음</span> | `window.location.href`<span> 사용</span> |
-| <span>클라이언트 </span>`signOut()`<span> 후 이동</span> | <span>서버 쿠키 미삭제 → 루프</span> | <span>API route에서 서버 signOut</span> |
-| <span>callback route 없이 로그인</span> | <span>세션이 localStorage에만 저장</span> | `/api/auth/callback`<span> route 필수</span> |
+| `app/layout.tsx`에 인증 체크 | `/login`도 redirect 대상이 되어 루프 | `(dashboard)/layout.tsx`로 이동 |
+| middleware에서 redirect | `/login` 접근 시 루프 | middleware는 세션 갱신만 |
+| `router.push("/tasks")` 로 로그인 후 이동 | 서버가 세션 쿠키 못 읽음 | `window.location.href` 사용 |
+| 클라이언트 `signOut()` 후 이동 | 서버 쿠키 미삭제 → 루프 | API route에서 서버 signOut |
+| callback route 없이 로그인 | 세션이 localStorage에만 저장 | `/api/auth/callback` route 필수 |
