@@ -38,6 +38,7 @@ export const GET: APIRoute = async () => {
     postPerIndex: extractNumber(src, "postPerIndex"),
     postPerPage: extractNumber(src, "postPerPage"),
     showArchives: extractBool(src, "showArchives"),
+    showAbout: extractBool(src, "showAbout"),
     showBackButton: extractBool(src, "showBackButton"),
     lang: extractString(src, "lang"),
     timezone: extractString(src, "timezone"),
@@ -50,7 +51,7 @@ export const PUT: APIRoute = async ({ request }) => {
   let src = await fs.readFile(FILE_PATH, "utf-8");
 
   const strings = ["website", "author", "profile", "desc", "title", "lang", "timezone"];
-  const bools = ["showArchives", "showBackButton"];
+  const bools = ["showArchives", "showAbout", "showBackButton"];
   const numbers = ["postPerIndex", "postPerPage"];
 
   for (const key of strings) {

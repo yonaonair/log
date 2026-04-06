@@ -44,16 +44,19 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
         <span class="sr-only">RSS Feed</span>
       </a>
 
-      <p>{homeConfig.paragraph1}</p>
-      <p class="mt-2">
-        {homeConfig.paragraph2}
-        <LinkButton
-          class="underline decoration-dashed underline-offset-4 hover:text-accent"
-          href={homeConfig.linkHref}
-        >
-          {homeConfig.linkText}
-        </LinkButton> for more info.
-      </p>
+      {homeConfig.paragraphs.map((p, i) => (
+        <p class={i > 0 ? "mt-2" : ""}>
+          {p.text}
+          {p.linkText && p.linkHref && (
+            <LinkButton
+              class="underline decoration-dashed underline-offset-4 hover:text-accent"
+              href={p.linkHref}
+            >
+              {p.linkText}
+            </LinkButton>
+          )}
+        </p>
+      ))}
       {
         // only display if at least one social link is enabled
         SOCIALS.length > 0 && (

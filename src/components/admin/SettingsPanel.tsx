@@ -7,12 +7,11 @@ const SOCIAL_PLATFORMS = ["GitHub", "X", "LinkedIn", "Mail", "Facebook", "Telegr
 
 interface SiteConfig {
   website: string; author: string; profile: string; desc: string; title: string;
-  postPerIndex: number; postPerPage: number; showArchives: boolean; showBackButton: boolean;
+  postPerIndex: number; postPerPage: number; showArchives: boolean; showAbout: boolean; showBackButton: boolean;
   lang: string; timezone: string;
 }
-interface HomeConfig {
-  heroTitle: string; paragraph1: string; paragraph2: string; linkText: string; linkHref: string;
-}
+interface Paragraph { text: string; linkText: string; linkHref: string; }
+interface HomeConfig { heroTitle: string; paragraphs: Paragraph[]; }
 interface SocialItem { name: string; href: string; active: boolean; }
 
 function useSave<T>(endpoint: string) {
@@ -69,6 +68,7 @@ function SiteTab() {
         <Field label="인덱스 포스트 수"><input type="number" min={1} value={form.postPerIndex} onChange={e => set("postPerIndex", parseInt(e.target.value))} /></Field>
         <Field label="페이지당 포스트 수"><input type="number" min={1} value={form.postPerPage} onChange={e => set("postPerPage", parseInt(e.target.value))} /></Field>
         <Field label="아카이브 표시"><Toggle checked={form.showArchives} onChange={v => set("showArchives", v)} /></Field>
+        <Field label="소개 페이지 표시"><Toggle checked={form.showAbout} onChange={v => set("showAbout", v)} /></Field>
         <Field label="뒤로가기 버튼"><Toggle checked={form.showBackButton} onChange={v => set("showBackButton", v)} /></Field>
       </div>
       <div className="settings-actions"><SaveBtn saving={saving} saved={saved} /></div>
@@ -82,19 +82,49 @@ function HomeTab() {
   useEffect(() => { if (data) setForm(data); }, [data]);
   if (!form) return <div className="settings-loading">불러오는 중...</div>;
 
-  const set = (k: keyof HomeConfig, v: string) => setForm(f => f ? { ...f, [k]: v } : f);
+  const updateParagraph = (i: number, patch: Partial<Paragraph>) =>
+    setForm(f => f ? { ...f, paragraphs: f.paragraphs.map((p, idx) => idx === i ? { ...p, ...patch } : p) } : f);
+  const addParagraph = () =>
+    setForm(f => f ? { ...f, paragraphs: [...f.paragraphs, { text: "", linkText: "", linkHref: "" }] } : f);
+  const removeParagraph = (i: number) =>
+    setForm(f => f ? { ...f, paragraphs: f.paragraphs.filter((_, idx) => idx !== i) } : f);
 
   return (
     <form onSubmit={e => { e.preventDefault(); save(form!); }}>
       <div className="settings-grid">
-        <Field label="히어로 제목"><input value={form.heroTitle} onChange={e => set("heroTitle", e.target.value)} /></Field>
-        <Field label="첫 번째 단락" full>
-          <textarea rows={4} value={form.paragraph1} onChange={e => set("paragraph1", e.target.value)} />
+        <Field label="히어로 제목" full>
+          <input value={form.heroTitle} onChange={e => setForm(f => f ? { ...f, heroTitle: e.target.value } : f)} />
         </Field>
-        <Field label="두 번째 단락 텍스트"><input value={form.paragraph2} onChange={e => set("paragraph2", e.target.value)} /></Field>
-        <Field label="링크 텍스트"><input value={form.linkText} onChange={e => set("linkText", e.target.value)} /></Field>
-        <Field label="링크 URL"><input value={form.linkHref} onChange={e => set("linkHref", e.target.value)} /></Field>
       </div>
+
+      <div className="home-paragraphs">
+        <div className="settings-label" style={{ marginBottom: 8 }}>단락</div>
+        {form.paragraphs.map((p, i) => (
+          <div key={i} className="home-paragraph-block">
+            <div className="home-paragraph-header">
+              <span className="home-paragraph-num">단락 {i + 1}</span>
+              <button type="button" className="icon-btn-sm danger" onClick={() => removeParagraph(i)}>
+                <Trash2 size={13} />
+              </button>
+            </div>
+            <div className="settings-grid" style={{ marginBottom: 0 }}>
+              <Field label="텍스트" full>
+                <textarea rows={2} value={p.text} onChange={e => updateParagraph(i, { text: e.target.value })} />
+              </Field>
+              <Field label="링크 텍스트">
+                <input placeholder="없으면 비워두세요" value={p.linkText} onChange={e => updateParagraph(i, { linkText: e.target.value })} />
+              </Field>
+              <Field label="링크 URL">
+                <input placeholder="없으면 비워두세요" value={p.linkHref} onChange={e => updateParagraph(i, { linkHref: e.target.value })} />
+              </Field>
+            </div>
+          </div>
+        ))}
+        <button type="button" className="btn-add-social" onClick={addParagraph}>
+          <Plus size={14} /> 단락 추가
+        </button>
+      </div>
+
       <div className="settings-actions"><SaveBtn saving={saving} saved={saved} /></div>
     </form>
   );
