@@ -1,15 +1,15 @@
 {
-  "heroTitle": "Mingalaba",
+  "heroTitle": "art of loving",
   "paragraphs": [
     {
-      "text": "AstroPaper is a minimal, responsive, accessible and SEO-friendly Astro blog theme. This theme follows best practices and provides accessibility out of the box. Light and dark mode are supported by default. Moreover, additional color schemes can also be configured.",
+      "text": "좋아하는 걸 배우고 읽고 쓰고 만듭니다. 한국어와 독일어, 영어를 말하고 다른 언어들에도 욕심을 내고 있어요. 최근 즐겁게 읽은 시집은 고선경 시인의 <심장보다 단단한 토마토 한 알> 재미있었던 영화는 해롤드 래미스 감독의 <사랑의 블랙홀>. 디자인에서 프론트엔드, 프론트엔드에서 엔지니어링에 흥미를 느껴 공부하고 있습니다. ",
       "linkText": "",
       "linkHref": ""
     },
     {
-      "text": "Read the blog posts or check",
-      "linkText": "README",
-      "linkHref": "https://github.com/satnaing/astro-paper#readme"
+      "text": "playlist : ",
+      "linkText": "신인류, '정면돌파'",
+      "linkHref": "https://youtu.be/KJaOcvtBkL4?si=DhjvApr8i2a8oyu0"
     }
   ]
 }
