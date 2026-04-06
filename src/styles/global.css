@@ -1,4 +1,5 @@
 @import url("https://rsms.me/inter/inter.css");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 @import "tailwindcss";
 @import "./typography.css";
 
@@ -59,9 +60,6 @@
   font-weight: 800; font-display: swap;
   unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
 }
-
-/* ── Ubuntu Mono (code, Latin) ───────────────────────────────────────────── */
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 /* ── 구름 산스 코드 (code, Korean only) ──────────────────────────────────── */
 @font-face {

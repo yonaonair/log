@@ -1,3 +1,14 @@
+/* ─── Code Fonts ─────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@font-face {
+  font-family: 'CloudSansCode';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/goorm-sans-code.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+  unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
 /* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -608,7 +619,7 @@
 .prose-editor s { text-decoration: line-through; color: #999; }
 
 .prose-editor code {
-  font-family: "SFMono-Regular", "Menlo", monospace;
+  font-family: 'CloudSansCode', 'Ubuntu Mono', ui-monospace, monospace;
   font-size: .875em;
   padding: .15em .4em;
   background: #f3f3f3;
@@ -632,12 +643,26 @@
 }
 
 .prose-editor pre code {
+  font-family: 'CloudSansCode', 'Ubuntu Mono', ui-monospace, monospace;
   background: none;
-  color: #d4d4d4;
+  color: #abb2bf;
   font-size: .875em;
   padding: 0;
   border-radius: 0;
 }
+
+/* ─── highlight.js syntax colors (atom-one-dark) ──────────────────────────── */
+.hljs-comment, .hljs-quote { color: #5c6370; font-style: italic; }
+.hljs-doctag, .hljs-keyword, .hljs-formula { color: #c678dd; }
+.hljs-section, .hljs-name, .hljs-selector-tag, .hljs-deletion, .hljs-subst { color: #e06c75; }
+.hljs-literal { color: #56b6c2; }
+.hljs-string, .hljs-regexp, .hljs-addition, .hljs-attribute, .hljs-meta .hljs-string { color: #98c379; }
+.hljs-attr, .hljs-variable, .hljs-template-variable, .hljs-type, .hljs-selector-class, .hljs-selector-attr, .hljs-selector-pseudo, .hljs-number { color: #d19a66; }
+.hljs-symbol, .hljs-bullet, .hljs-link, .hljs-meta, .hljs-selector-id, .hljs-title { color: #61aeee; }
+.hljs-built_in, .hljs-title.class_, .hljs-class .hljs-title { color: #e6c07b; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: bold; }
+.hljs-link { text-decoration: underline; }
 
 .prose-editor blockquote {
   border-left: 3px solid #e0e0e0;
