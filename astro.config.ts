@@ -10,7 +10,7 @@ import {
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { SITE } from "./src/config";
-import node from "@astrojs/node";
+import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 
@@ -19,7 +19,7 @@ export default defineConfig({
   site: SITE.website,
   output: "server",
   devToolbar: { enabled: false },
-  adapter: node({ mode: "middleware" }),
+  adapter: vercel(),
   integrations: [
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),

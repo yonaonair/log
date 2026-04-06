@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "astro build && pagefind --site dist/client"
+}
