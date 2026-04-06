@@ -1,8 +1,8 @@
 export const SITE = {
   website: "https://yonaonair.kro.kr/", // replace this with your deployed domain
   author: "yona",
-  profile: "https://yonaonair.kro.kr/",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
+  profile: "https://github.com/yonaonair",
+  desc: "",
   title: "yona on air",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
