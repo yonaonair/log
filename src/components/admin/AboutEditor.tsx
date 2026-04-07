@@ -1,309 +1,466 @@
-import { useState, useRef, useEffect } from "react";
-import { Save, Loader2, Bold as BoldIcon, Italic as ItalicIcon, Underline as UnderlineIcon, Strikethrough, Code, Link as LinkIcon, Highlighter, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { startTransition, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { Typography } from "@tiptap/extension-typography";
 import { Link } from "@tiptap/extension-link";
-import { TextAlign } from "@tiptap/extension-text-align";
-import { ResizableImage } from "./extensions/ResizableImage";
-import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table";
-import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { Underline } from "@tiptap/extension-underline";
-import { Highlight } from "@tiptap/extension-highlight";
-import { common, createLowlight } from "lowlight";
+import { Typography } from "@tiptap/extension-typography";
 import { Markdown } from "tiptap-markdown";
-import { MessageBubble } from "./extensions/MessageBubble";
-import { Callout } from "./extensions/Callout";
-import { YellowHighlightRule } from "./extensions/YellowHighlightRule";
-import {
-  SlashCommands,
-  getSlashCommands,
-  type SlashCommandItem,
-} from "./extensions/SlashCommandExtension";
-import { WikiLink } from "./extensions/WikiLink";
-import { TabIndent } from "./extensions/TabIndent";
-import type { Editor as TiptapEditor } from "@tiptap/core";
+import { CheckCircle2, Eye, FileCode2, Loader2, Save } from "lucide-react";
 
-const lowlight = createLowlight(common);
-type MarkdownStorage = { markdown?: { getMarkdown?: () => string } };
+const markdownGuide = `# About
 
-interface SlashRenderProps {
-  items: SlashCommandItem[];
-  range: { from: number; to: number };
-  command: (item: SlashCommandItem) => void;
-}
-interface SlashCommandArg {
-  editor: TiptapEditor;
-  range: { from: number; to: number };
-  props: SlashCommandItem;
-}
+간단한 소개 문장을 여기에 적어보세요.
 
-function FloatingBubbleMenu({ editor }: { editor: TiptapEditor }) {
-  const [state, setState] = useState({ visible: false, top: 0, left: 0 });
-  const menuRef = useRef<HTMLDivElement>(null);
+## 핵심 링크
 
-  useEffect(() => {
-    if (!editor) return;
-    const update = () => {
-      const { from, to } = editor.state.selection;
-      if (from === to || editor.isActive("image")) {
-        setState(s => ({ ...s, visible: false }));
-        return;
-      }
-      const view = editor.view;
-      const startCoords = view.coordsAtPos(from);
-      const endCoords = view.coordsAtPos(to);
-      const midX = (startCoords.left + endCoords.left) / 2;
-      setState({ visible: true, top: startCoords.top - 52, left: midX });
-    };
-    editor.on("selectionUpdate", update);
-    editor.on("blur", () => setState(s => ({ ...s, visible: false })));
-    return () => {
-      editor.off("selectionUpdate", update);
-    };
-  }, [editor]);
+- [GitHub](https://github.com/)
+- [Portfolio](https://example.com/)
 
-  if (!editor || !state.visible) return null;
-
-  return (
-    <div
-      ref={menuRef}
-      className="bubble-menu"
-      style={{ position: "fixed", top: state.top, left: state.left, transform: "translateX(-50%)", zIndex: 100 }}
-      onMouseDown={e => e.preventDefault()}
-    >
-      <button className={`bm-btn ${editor.isActive("bold") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleBold().run()}><BoldIcon size={14} /></button>
-      <button className={`bm-btn ${editor.isActive("italic") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleItalic().run()}><ItalicIcon size={14} /></button>
-      <button className={`bm-btn ${editor.isActive("underline") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleUnderline().run()}><UnderlineIcon size={14} /></button>
-      <button className={`bm-btn ${editor.isActive("strike") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough size={14} /></button>
-      <div className="bm-divider" />
-      <button className={`bm-btn ${editor.isActive("highlight") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleHighlight().run()} title="노란 강조"><Highlighter size={14} /></button>
-      <button className={`bm-btn ${editor.isActive("code") ? "active" : ""}`} onClick={() => editor.chain().focus().toggleCode().run()}><Code size={14} /></button>
-      <button
-        className={`bm-btn ${editor.isActive("link") ? "active" : ""}`}
-        onClick={() => {
-          const url = prompt("URL:", editor.getAttributes("link").href ?? "");
-          if (url === null) return;
-          if (!url) { editor.chain().focus().unsetLink().run(); return; }
-          editor.chain().focus().setLink({ href: url }).run();
-        }}
-      ><LinkIcon size={14} /></button>
-      <div className="bm-divider" />
-      <button className={`bm-btn ${editor.isActive({ textAlign: "left" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("left").run()} title="왼쪽 정렬"><AlignLeft size={14} /></button>
-      <button className={`bm-btn ${editor.isActive({ textAlign: "center" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("center").run()} title="가운데 정렬"><AlignCenter size={14} /></button>
-      <button className={`bm-btn ${editor.isActive({ textAlign: "right" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("right").run()} title="오른쪽 정렬"><AlignRight size={14} /></button>
-      <button className={`bm-btn ${editor.isActive({ textAlign: "justify" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("justify").run()} title="양쪽 정렬"><AlignJustify size={14} /></button>
-    </div>
-  );
-}
-
-function SlashMenu({ items, selectedIndex, onSelect }: { items: SlashCommandItem[]; selectedIndex: number; onSelect: (item: SlashCommandItem) => void }) {
-  const listRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = listRef.current?.children[selectedIndex] as HTMLElement;
-    el?.scrollIntoView({ block: "nearest" });
-  }, [selectedIndex]);
-  return (
-    <div className="slash-menu" ref={listRef}>
-      {items.map((item, i) => (
-        <button
-          key={item.title}
-          className={`slash-item ${i === selectedIndex ? "slash-item-active" : ""}`}
-          onMouseDown={e => { e.preventDefault(); onSelect(item); }}
-        >
-          <span className="slash-icon">{item.icon}</span>
-          <span className="slash-label">
-            <span className="slash-title">{item.title}</span>
-            <span className="slash-desc">{item.description}</span>
-          </span>
-        </button>
-      ))}
-    </div>
-  );
-}
+> 마크다운 문법을 그대로 입력하면 오른쪽 미리보기에 바로 반영됩니다.
+`;
 
 export default function AboutEditor() {
   const [frontmatter, setFrontmatter] = useState("");
+  const [body, setBody] = useState("");
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [slashState, setSlashState] = useState<{
-    show: boolean;
-    items: SlashCommandItem[];
-    index: number;
-    range: { from: number; to: number } | null;
-  }>({ show: false, items: [], index: 0, range: null });
 
-  const slashSelectRef = useRef<((item: SlashCommandItem) => void) | null>(null);
-  const slashIndexRef = useRef(0);
-  const slashItemsRef = useRef<SlashCommandItem[]>([]);
+  const deferredBody = useDeferredValue(body);
 
-  const pendingBody = useRef<string | null>(null);
-
-  const editor = useEditor({
+  const previewEditor = useEditor({
     immediatelyRender: false,
+    editable: false,
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
-      Placeholder.configure({
-        placeholder: "소개글을 작성하거나 '/'를 입력해 블록을 삽입하세요…",
-      }),
+      StarterKit,
       Typography,
-      Underline,
-      Highlight.configure({ multicolor: false }),
-      Link.configure({ openOnClick: false }),
-      ResizableImage,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Table,
-      TableRow,
-      TableHeader,
-      TableCell,
-      CodeBlockLowlight.configure({ lowlight }),
-      TextStyle,
+      Link.configure({ openOnClick: true }),
       Markdown.configure({ html: true, tightLists: true, transformPastedText: true }),
-      MessageBubble,
-      Callout,
-      WikiLink,
-      TabIndent,
-      YellowHighlightRule,
-      SlashCommands.configure({
-        suggestion: {
-          char: "/",
-          items: ({ query }: { query: string }) => {
-            const all = getSlashCommands();
-            return query
-              ? all.filter(i => i.title.toLowerCase().includes(query.toLowerCase()))
-              : all;
-          },
-          render: () => ({
-            onStart: (props: SlashRenderProps) => {
-              slashIndexRef.current = 0;
-              slashItemsRef.current = props.items;
-              slashSelectRef.current = (item: SlashCommandItem) => props.command(item);
-              setSlashState({ show: true, items: props.items, index: 0, range: props.range });
-            },
-            onUpdate: (props: SlashRenderProps) => {
-              slashIndexRef.current = 0;
-              slashItemsRef.current = props.items;
-              slashSelectRef.current = (item: SlashCommandItem) => props.command(item);
-              setSlashState(s => ({ ...s, items: props.items, range: props.range, index: 0 }));
-            },
-            onExit: () => {
-              slashSelectRef.current = null;
-              setSlashState(s => ({ ...s, show: false }));
-            },
-            onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-              if (event.key === "ArrowDown") {
-                const newIdx = (slashIndexRef.current + 1) % slashItemsRef.current.length;
-                slashIndexRef.current = newIdx;
-                setSlashState(s => ({ ...s, index: newIdx }));
-                return true;
-              }
-              if (event.key === "ArrowUp") {
-                const newIdx = (slashIndexRef.current - 1 + slashItemsRef.current.length) % slashItemsRef.current.length;
-                slashIndexRef.current = newIdx;
-                setSlashState(s => ({ ...s, index: newIdx }));
-                return true;
-              }
-              if (event.key === "Enter") {
-                const item = slashItemsRef.current[slashIndexRef.current];
-                if (item && slashSelectRef.current) slashSelectRef.current(item);
-                return true;
-              }
-              if (event.key === "Escape") {
-                setSlashState(s => ({ ...s, show: false }));
-                return true;
-              }
-              return false;
-            },
-          }),
-          command: ({ editor: ed, range, props }: SlashCommandArg) => {
-            ed.chain().focus().deleteRange(range).run();
-            props.command(ed);
-            setSlashState(s => ({ ...s, show: false }));
-          },
-        },
-      }),
     ],
     editorProps: {
-      attributes: { class: "prose-editor", spellcheck: "false" },
-    },
-    onCreate: ({ editor: ed }) => {
-      if (pendingBody.current !== null) {
-        ed.commands.setContent(pendingBody.current);
-        pendingBody.current = null;
-      }
+      attributes: {
+        class: "app-prose prose-editor about-preview-editor",
+      },
     },
   });
 
   useEffect(() => {
+    let active = true;
+
     fetch("/api/admin/config/about")
       .then(r => r.json())
-      .then(d => {
-        setFrontmatter(d.frontmatter ?? "");
-        const body = d.body ?? "";
-        if (editor) {
-          editor.commands.setContent(body);
-        } else {
-          pendingBody.current = body;
-        }
+      .then(data => {
+        if (!active) return;
+        setFrontmatter(data.frontmatter ?? "");
+        setBody(data.body ?? "");
       })
-      .catch(() => {});
-  }, [editor]);
+      .catch(() => {
+        if (!active) return;
+        setBody("");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!previewEditor) return;
+    previewEditor.commands.setContent(deferredBody || " ");
+  }, [deferredBody, previewEditor]);
 
   const handleSave = async () => {
-    if (!editor) return;
     setSaving(true);
+
     try {
-      const body =
-        (editor.storage as MarkdownStorage).markdown?.getMarkdown?.() ??
-        editor.getText();
       await fetch("/api/admin/config/about", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ frontmatter, body }),
       });
+
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      window.setTimeout(() => setSaved(false), 2200);
     } finally {
       setSaving(false);
     }
   };
 
+  const stats = useMemo(() => {
+    const trimmed = body.trim();
+    const words = trimmed ? trimmed.split(/\s+/).length : 0;
+    const lines = body ? body.split(/\r?\n/).length : 0;
+
+    return { words, lines };
+  }, [body]);
+
   return (
-    <div className="editor-root">
-      <div className="editor-topbar">
-        <div className="editor-topbar-left" />
-        <div className="editor-topbar-right">
-          <button
-            className="btn-publish"
-            onClick={handleSave}
-            disabled={saving}
-            style={{ minWidth: 90 }}
+    <div
+      style={{
+        minHeight: "100%",
+        background:
+          "linear-gradient(180deg, rgba(247,248,250,0.96) 0%, rgba(255,255,255,1) 28%, rgba(244,247,251,0.92) 100%)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1440,
+          margin: "0 auto",
+          padding: "32px 20px 40px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 20,
+        }}
+      >
+        <section
+          style={{
+            border: "1px solid rgba(15, 23, 42, 0.08)",
+            borderRadius: 28,
+            padding: "24px 24px 20px",
+            background:
+              "radial-gradient(circle at top left, rgba(0,108,172,0.12), transparent 36%), #ffffff",
+            boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 16,
+              flexWrap: "wrap",
+              alignItems: "flex-start",
+            }}
           >
-            {saving ? (
-              <Loader2 size={14} className="spin" />
-            ) : saved ? (
-              "저장됨 ✓"
-            ) : (
-              <><Save size={14} style={{ marginRight: 6 }} />저장</>
-            )}
-          </button>
-        </div>
-      </div>
-      <div className="editor-scroll">
-        <div className="editor-inner">
-          {editor && <FloatingBubbleMenu editor={editor} />}
-          {slashState.show && slashState.items.length > 0 && (
-            <SlashMenu
-              items={slashState.items}
-              selectedIndex={slashState.index}
-              onSelect={item => {
-                if (slashSelectRef.current) slashSelectRef.current(item);
+            <div style={{ maxWidth: 760 }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "7px 12px",
+                  borderRadius: 999,
+                  background: "rgba(0,108,172,0.08)",
+                  color: "#00598d",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                <FileCode2 size={14} />
+                Markdown-first editor
+              </div>
+              <h1
+                style={{
+                  margin: "16px 0 8px",
+                  fontSize: "clamp(1.75rem, 3vw, 2.6rem)",
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.04em",
+                  fontWeight: 800,
+                  color: "#0f172a",
+                }}
+              >
+                소개 페이지를 마크다운 그대로 편집
+              </h1>
+              <p
+                style={{
+                  margin: 0,
+                  color: "#475569",
+                  fontSize: 15,
+                  lineHeight: 1.7,
+                }}
+              >
+                왼쪽에는 원문을 그대로 입력하고, 오른쪽에서 실제 렌더링 결과를 바로 확인할 수 있게 구성했습니다.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
               }}
-            />
-          )}
-          <EditorContent editor={editor} />
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  flexWrap: "wrap",
+                  color: "#64748b",
+                  fontSize: 13,
+                }}
+              >
+                <span
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                  }}
+                >
+                  {stats.words} words
+                </span>
+                <span
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                  }}
+                >
+                  {stats.lines} lines
+                </span>
+              </div>
+
+              <button
+                className="btn-publish"
+                onClick={handleSave}
+                disabled={saving || loading}
+                style={{
+                  minWidth: 132,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 size={15} className="spin" />
+                    저장 중
+                  </>
+                ) : saved ? (
+                  <>
+                    <CheckCircle2 size={15} />
+                    저장 완료
+                  </>
+                ) : (
+                  <>
+                    <Save size={15} />
+                    저장하기
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: 20,
+          }}
+        >
+          <section
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                border: "1px solid rgba(15, 23, 42, 0.08)",
+                borderRadius: 24,
+                overflow: "hidden",
+                background: "#ffffff",
+                boxShadow: "0 16px 40px rgba(15, 23, 42, 0.06)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  padding: "16px 18px",
+                  borderBottom: "1px solid #e2e8f0",
+                  background: "#f8fafc",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <FileCode2 size={16} color="#0f766e" />
+                  <strong style={{ color: "#0f172a", fontSize: 15 }}>
+                    본문 Markdown
+                  </strong>
+                </div>
+                <span style={{ fontSize: 12, color: "#64748b" }}>
+                  문법을 그대로 입력하세요
+                </span>
+              </div>
+
+              <textarea
+                value={body}
+                onChange={e => {
+                  const nextValue = e.target.value;
+                  startTransition(() => setBody(nextValue));
+                }}
+                placeholder={markdownGuide}
+                spellCheck={false}
+                style={{
+                  width: "100%",
+                  minHeight: 560,
+                  padding: 20,
+                  border: "none",
+                  resize: "vertical",
+                  outline: "none",
+                  fontSize: 15,
+                  lineHeight: 1.8,
+                  background: "#fff",
+                  color: "#0f172a",
+                  fontFamily:
+                    "var(--font-orbit), 'SFMono-Regular', Consolas, monospace",
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                border: "1px solid rgba(15, 23, 42, 0.08)",
+                borderRadius: 24,
+                overflow: "hidden",
+                background: "#ffffff",
+                boxShadow: "0 16px 40px rgba(15, 23, 42, 0.06)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  padding: "16px 18px",
+                  borderBottom: "1px solid #e2e8f0",
+                  background: "#f8fafc",
+                }}
+              >
+                <strong style={{ color: "#0f172a", fontSize: 15 }}>
+                  Frontmatter
+                </strong>
+                <span style={{ fontSize: 12, color: "#64748b" }}>
+                  비워두면 기존 구조만 유지됩니다
+                </span>
+              </div>
+
+              <textarea
+                value={frontmatter}
+                onChange={e => setFrontmatter(e.target.value)}
+                placeholder={"title: About\nlayout: page"}
+                spellCheck={false}
+                style={{
+                  width: "100%",
+                  minHeight: 160,
+                  padding: 18,
+                  border: "none",
+                  resize: "vertical",
+                  outline: "none",
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  background: "#fffcf5",
+                  color: "#334155",
+                  fontFamily:
+                    "var(--font-orbit), 'SFMono-Regular', Consolas, monospace",
+                }}
+              />
+            </div>
+          </section>
+
+          <aside
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                border: "1px solid rgba(15, 23, 42, 0.08)",
+                borderRadius: 24,
+                overflow: "hidden",
+                background: "#ffffff",
+                boxShadow: "0 16px 40px rgba(15, 23, 42, 0.06)",
+                minHeight: 300,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  padding: "16px 18px",
+                  borderBottom: "1px solid #e2e8f0",
+                  background:
+                    "linear-gradient(90deg, rgba(15,118,110,0.08), rgba(255,255,255,1))",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Eye size={16} color="#0f766e" />
+                  <strong style={{ color: "#0f172a", fontSize: 15 }}>
+                    실시간 미리보기
+                  </strong>
+                </div>
+                <span style={{ fontSize: 12, color: "#64748b" }}>
+                  실제 렌더 결과 확인
+                </span>
+              </div>
+
+              <div style={{ padding: 20 }}>
+                {loading ? (
+                  <div
+                    style={{
+                      minHeight: 240,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#64748b",
+                      gap: 10,
+                    }}
+                  >
+                    <Loader2 size={16} className="spin" />
+                    불러오는 중
+                  </div>
+                ) : (
+                  <EditorContent editor={previewEditor} />
+                )}
+              </div>
+            </div>
+
+            <div
+              style={{
+                border: "1px solid rgba(15, 23, 42, 0.08)",
+                borderRadius: 24,
+                padding: 18,
+                background: "#0f172a",
+                color: "#e2e8f0",
+                boxShadow: "0 16px 40px rgba(15, 23, 42, 0.18)",
+              }}
+            >
+              <strong style={{ display: "block", marginBottom: 12, fontSize: 15 }}>
+                빠른 팁
+              </strong>
+              <ul
+                style={{
+                  margin: 0,
+                  paddingLeft: 18,
+                  display: "grid",
+                  gap: 8,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  color: "#cbd5e1",
+                }}
+              >
+                <li>`#`, `##`로 제목을 만들 수 있습니다.</li>
+                <li>빈 줄을 넣어야 문단이 자연스럽게 분리됩니다.</li>
+                <li>링크와 리스트는 원문 그대로 유지되고 오른쪽에서 바로 확인됩니다.</li>
+              </ul>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
