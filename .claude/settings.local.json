@@ -36,7 +36,8 @@
       "Bash(npx eslint:*)",
       "Bash(npm run:*)",
       "Bash(npm config:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(find node_modules/@tiptap/extension-image -name \"*.js\" -exec grep -l \"inline\\\\|group\" {} \\\\;)"
     ]
   }
 }

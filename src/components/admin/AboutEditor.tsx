@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Save, Loader2, Bold as BoldIcon, Italic as ItalicIcon, Underline as UnderlineIcon, Strikethrough, Code, Link as LinkIcon, Highlighter } from "lucide-react";
+import { Save, Loader2, Bold as BoldIcon, Italic as ItalicIcon, Underline as UnderlineIcon, Strikethrough, Code, Link as LinkIcon, Highlighter, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Typography } from "@tiptap/extension-typography";
 import { Link } from "@tiptap/extension-link";
-import { Image } from "@tiptap/extension-image";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { ResizableImage } from "./extensions/ResizableImage";
 import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table";
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -89,6 +90,11 @@ function FloatingBubbleMenu({ editor }: { editor: TiptapEditor }) {
           editor.chain().focus().setLink({ href: url }).run();
         }}
       ><LinkIcon size={14} /></button>
+      <div className="bm-divider" />
+      <button className={`bm-btn ${editor.isActive({ textAlign: "left" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("left").run()} title="왼쪽 정렬"><AlignLeft size={14} /></button>
+      <button className={`bm-btn ${editor.isActive({ textAlign: "center" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("center").run()} title="가운데 정렬"><AlignCenter size={14} /></button>
+      <button className={`bm-btn ${editor.isActive({ textAlign: "right" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("right").run()} title="오른쪽 정렬"><AlignRight size={14} /></button>
+      <button className={`bm-btn ${editor.isActive({ textAlign: "justify" }) ? "active" : ""}`} onClick={() => editor.chain().focus().setTextAlign("justify").run()} title="양쪽 정렬"><AlignJustify size={14} /></button>
     </div>
   );
 }
@@ -146,14 +152,15 @@ export default function AboutEditor() {
       Underline,
       Highlight.configure({ multicolor: false }),
       Link.configure({ openOnClick: false }),
-      Image,
+      ResizableImage,
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       Table,
       TableRow,
       TableHeader,
       TableCell,
       CodeBlockLowlight.configure({ lowlight }),
       TextStyle,
-      Markdown.configure({ html: true, tightLists: true }),
+      Markdown.configure({ html: true, tightLists: true, transformPastedText: true }),
       MessageBubble,
       Callout,
       WikiLink,

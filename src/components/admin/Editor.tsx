@@ -5,7 +5,8 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Typography } from "@tiptap/extension-typography";
 import { Link } from "@tiptap/extension-link";
-import { Image } from "@tiptap/extension-image";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { ResizableImage } from "./extensions/ResizableImage";
 import {
   Table,
   TableRow,
@@ -77,6 +78,10 @@ import {
   Lightbulb,
   AlertTriangle,
   AlertOctagon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 
 const lowlight = createLowlight(common);
@@ -211,6 +216,35 @@ function FloatingBubbleMenu({ editor }: { editor: TiptapEditor }) {
       >
         <LinkIcon size={14} />
       </button>
+      <div className="bm-divider" />
+      <button
+        className={`bm-btn ${editor.isActive({ textAlign: "left" }) ? "active" : ""}`}
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        title="왼쪽 정렬"
+      >
+        <AlignLeft size={14} />
+      </button>
+      <button
+        className={`bm-btn ${editor.isActive({ textAlign: "center" }) ? "active" : ""}`}
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        title="가운데 정렬"
+      >
+        <AlignCenter size={14} />
+      </button>
+      <button
+        className={`bm-btn ${editor.isActive({ textAlign: "right" }) ? "active" : ""}`}
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        title="오른쪽 정렬"
+      >
+        <AlignRight size={14} />
+      </button>
+      <button
+        className={`bm-btn ${editor.isActive({ textAlign: "justify" }) ? "active" : ""}`}
+        onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+        title="양쪽 정렬"
+      >
+        <AlignJustify size={14} />
+      </button>
     </div>
   );
 }
@@ -326,7 +360,8 @@ export default function Editor({
       Underline,
       Highlight.configure({ multicolor: false }),
       Link.configure({ openOnClick: false }),
-      Image,
+      ResizableImage,
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       Table,
       TableRow,
       TableHeader,
@@ -334,7 +369,7 @@ export default function Editor({
       CodeBlockLowlight.configure({ lowlight }),
       TextStyle,
       CharacterCount,
-      Markdown.configure({ html: true, tightLists: true }),
+      Markdown.configure({ html: true, tightLists: true, transformPastedText: true }),
       MessageBubble,
       Bookmark,
       Callout,
