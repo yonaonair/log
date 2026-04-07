@@ -196,33 +196,3 @@ html[data-theme="dark"] {
 .switch input:checked + .slider::before {
   transform: translateX(18px);
 }
-
-.spin {
-  animation: spin 0.9s linear infinite;
-}
-
-.about-preview-editor {
-  min-height: 240px;
-}
-
-.about-preview-editor:focus {
-  outline: none;
-}
-
-.about-preview-editor > *:first-child {
-  margin-top: 0;
-}
-
-.about-preview-editor > *:last-child {
-  margin-bottom: 0;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
