@@ -54,7 +54,11 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
   };
 
   return (
-    <NodeViewWrapper style={wrapperStyle} className={`resizable-image-wrapper${selected ? " is-selected" : ""}`}>
+    <NodeViewWrapper
+      as="span"
+      style={wrapperStyle}
+      className={`resizable-image-wrapper${selected ? " is-selected" : ""}`}
+    >
       <img
         ref={imgRef}
         src={src}
@@ -63,16 +67,16 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
         style={{
           width: width ? "100%" : "auto",
           maxWidth: "100%",
-          display: "block",
+          display: "inline-block",
+          verticalAlign: "middle",
         }}
-        draggable={false}
       />
       {selected && (
         <>
-          <div className="resize-handle resize-handle-w" onMouseDown={e => startResize(e, -1)} />
-          <div className="resize-handle resize-handle-e" onMouseDown={e => startResize(e, 1)} />
-          <div className="image-toolbar" contentEditable={false}>
-            <div className="image-align-btns">
+          <span className="resize-handle resize-handle-w" onMouseDown={e => startResize(e, -1)} />
+          <span className="resize-handle resize-handle-e" onMouseDown={e => startResize(e, 1)} />
+          <span className="image-toolbar" contentEditable={false}>
+            <span className="image-align-btns">
               {(["left", "center", "right"] as const).map(a => (
                 <button
                   key={a}
@@ -83,8 +87,8 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
                   {a === "left" ? <AlignLeft size={12} /> : a === "center" ? <AlignCenter size={12} /> : <AlignRight size={12} />}
                 </button>
               ))}
-            </div>
-            <div className="image-width-control">
+            </span>
+            <span className="image-width-control">
               <input
                 type="number"
                 value={inputWidth}
@@ -107,8 +111,8 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
                 placeholder="너비"
               />
               <span>px</span>
-            </div>
-          </div>
+            </span>
+          </span>
         </>
       )}
     </NodeViewWrapper>
