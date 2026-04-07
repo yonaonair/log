@@ -48,7 +48,8 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
     ...(align === "center" ? { marginLeft: "auto", marginRight: "auto" } : {}),
     ...(align === "right" ? { marginLeft: "auto" } : {}),
     ...(align === "left" ? { marginRight: "auto" } : {}),
-    width: width ? `${width}px` : "100%",
+    width: width ? `${width}px` : "fit-content",
+    maxWidth: "100%",
   };
 
   return (
@@ -58,7 +59,11 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
         src={src}
         alt={alt ?? ""}
         title={title ?? undefined}
-        style={{ width: "100%", display: "block" }}
+        style={{
+          width: width ? "100%" : "auto",
+          maxWidth: "100%",
+          display: "block",
+        }}
         draggable={false}
       />
       {selected && (
@@ -84,6 +89,11 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
                 value={inputWidth}
                 onChange={e => setInputWidth(e.target.value)}
                 onBlur={() => {
+                  if (!inputWidth.trim()) {
+                    updateAttributes({ width: null });
+                    setInputWidth("");
+                    return;
+                  }
                   const n = parseInt(inputWidth, 10);
                   if (!isNaN(n) && n >= 50) updateAttributes({ width: n });
                   else setInputWidth(width ? String(width) : "");
@@ -134,7 +144,18 @@ export const ResizableImage = Image.extend({
   addStorage() {
     return {
       markdown: {
-        serialize(state: any, node: any) {
+        serialize(
+          state: { write: (value: string) => void },
+          node: {
+            attrs: {
+              src: string;
+              alt?: string | null;
+              title?: string | null;
+              width?: number | null;
+              align?: Align;
+            };
+          }
+        ) {
           const { src, alt, title, width, align } = node.attrs;
           if (width || align) {
             let styleVal = "";

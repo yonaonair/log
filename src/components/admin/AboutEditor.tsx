@@ -179,6 +179,8 @@ export default function AboutEditor() {
   const [frontmatter, setFrontmatter] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [rawMode, setRawMode] = useState(false);
+  const [rawBody, setRawBody] = useState("");
   const [slashState, setSlashState] = useState<{
     show: boolean;
     items: SlashCommandItem[];
@@ -190,6 +192,7 @@ export default function AboutEditor() {
   const slashIndexRef = useRef(0);
   const slashItemsRef = useRef<SlashCommandItem[]>([]);
   const pendingBody = useRef<string | null>(null);
+  const rawTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -294,6 +297,7 @@ export default function AboutEditor() {
       .then(d => {
         setFrontmatter(d.frontmatter ?? "");
         const body = d.body ?? "";
+        setRawBody(body);
         if (editor) {
           editor.commands.setContent(body);
         } else {
@@ -301,6 +305,22 @@ export default function AboutEditor() {
         }
       })
       .catch(() => {});
+  }, [editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleUpdate = () => {
+      const nextBody =
+        (editor.storage as MarkdownStorage).markdown?.getMarkdown?.() ??
+        editor.getText();
+      setRawBody(nextBody);
+    };
+
+    editor.on("update", handleUpdate);
+    return () => {
+      editor.off("update", handleUpdate);
+    };
   }, [editor]);
 
   useEffect(() => {
@@ -333,13 +353,25 @@ export default function AboutEditor() {
     return () => dom.removeEventListener("paste", handlePaste, true);
   }, [editor]);
 
-  const handleSave = async () => {
+  useEffect(() => {
+    if (!rawMode || !rawTextareaRef.current) return;
+    rawTextareaRef.current.focus();
+  }, [rawMode]);
+
+  const handleRawChange = (nextBody: string) => {
+    setRawBody(nextBody);
     if (!editor) return;
+    editor.commands.setContent(nextBody, false);
+  };
+
+  const handleSave = async () => {
+    const body = rawMode
+      ? rawBody
+      : (editor?.storage as MarkdownStorage | undefined)?.markdown?.getMarkdown?.() ??
+        rawBody;
+
     setSaving(true);
     try {
-      const body =
-        (editor.storage as MarkdownStorage).markdown?.getMarkdown?.() ??
-        editor.getText();
       await fetch("/api/admin/config/about", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -375,8 +407,8 @@ export default function AboutEditor() {
       </div>
       <div className="editor-scroll">
         <div className="editor-inner" style={{ paddingTop: 8 }}>
-          {editor && <FloatingBubbleMenu editor={editor} />}
-          {slashState.show && slashState.items.length > 0 && (
+          {!rawMode && editor && <FloatingBubbleMenu editor={editor} />}
+          {!rawMode && slashState.show && slashState.items.length > 0 && (
             <SlashMenu
               items={slashState.items}
               selectedIndex={slashState.index}
@@ -385,7 +417,38 @@ export default function AboutEditor() {
               }}
             />
           )}
-          <EditorContent editor={editor} />
+          <div onDoubleClick={() => setRawMode(true)}>
+            {rawMode ? (
+              <textarea
+                ref={rawTextareaRef}
+                value={rawBody}
+                onChange={e => handleRawChange(e.target.value)}
+                onBlur={() => setRawMode(false)}
+                onKeyDown={e => {
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    setRawMode(false);
+                  }
+                }}
+                spellCheck={false}
+                style={{
+                  width: "100%",
+                  minHeight: "70vh",
+                  resize: "vertical",
+                  border: "none",
+                  outline: "none",
+                  background: "transparent",
+                  color: "inherit",
+                  fontSize: 15,
+                  lineHeight: 1.8,
+                  fontFamily:
+                    "var(--font-orbit), 'SFMono-Regular', Consolas, monospace",
+                }}
+              />
+            ) : (
+              <EditorContent editor={editor} />
+            )}
+          </div>
         </div>
       </div>
     </div>
