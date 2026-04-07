@@ -353,8 +353,8 @@ export default function AboutEditor() {
   };
 
   return (
-    <div className="editor-root about-editor-root" style={{ paddingBottom: 24 }}>
-      <div className="editor-topbar" style={{ paddingInline: 20, paddingTop: 16 }}>
+    <div className="editor-root">
+      <div className="editor-topbar" style={{ marginBottom: 20 }}>
         <div className="editor-topbar-left" />
         <div className="editor-topbar-right">
           <button
@@ -373,19 +373,8 @@ export default function AboutEditor() {
           </button>
         </div>
       </div>
-      <div className="editor-scroll" style={{ paddingInline: 20, paddingBottom: 24 }}>
-        <div
-          className="editor-inner"
-          style={{
-            maxWidth: 1040,
-            margin: "0 auto",
-            padding: "20px 24px 28px",
-            borderRadius: 20,
-            background: "#fff",
-            boxShadow: "0 10px 28px rgba(15, 23, 42, 0.06)",
-            border: "1px solid rgba(15, 23, 42, 0.06)",
-          }}
-        >
+      <div className="editor-scroll">
+        <div className="editor-inner" style={{ paddingTop: 8 }}>
           {editor && <FloatingBubbleMenu editor={editor} />}
           {slashState.show && slashState.items.length > 0 && (
             <SlashMenu
@@ -396,19 +385,6 @@ export default function AboutEditor() {
               }}
             />
           )}
-          <div
-            style={{
-              marginBottom: 16,
-              padding: "12px 14px",
-              borderRadius: 14,
-              background: "#f8fafc",
-              color: "#64748b",
-              fontSize: 13,
-              lineHeight: 1.6,
-            }}
-          >
-            마크다운 텍스트를 그대로 붙여넣으면 즉시 블록으로 변환됩니다. 입력 화면은 기존 에디터를 유지합니다.
-          </div>
           <EditorContent editor={editor} />
         </div>
       </div>
