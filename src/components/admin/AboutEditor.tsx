@@ -179,8 +179,16 @@ export default function AboutEditor() {
   const [frontmatter, setFrontmatter] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [rawMode, setRawMode] = useState(false);
   const [rawBody, setRawBody] = useState("");
+  const [blockEdit, setBlockEdit] = useState<{
+    from: number;
+    to: number;
+    markdown: string;
+    top: number;
+    left: number;
+    width: number;
+    minHeight: number;
+  } | null>(null);
   const [slashState, setSlashState] = useState<{
     show: boolean;
     items: SlashCommandItem[];
@@ -192,7 +200,9 @@ export default function AboutEditor() {
   const slashIndexRef = useRef(0);
   const slashItemsRef = useRef<SlashCommandItem[]>([]);
   const pendingBody = useRef<string | null>(null);
-  const rawTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const blockTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorInnerRef = useRef<HTMLDivElement>(null);
+  const hiddenBlockRef = useRef<HTMLElement | null>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -354,21 +364,110 @@ export default function AboutEditor() {
   }, [editor]);
 
   useEffect(() => {
-    if (!rawMode || !rawTextareaRef.current) return;
-    rawTextareaRef.current.focus();
-  }, [rawMode]);
+    if (!blockEdit || !blockTextareaRef.current) return;
+    blockTextareaRef.current.focus();
+    blockTextareaRef.current.select();
+  }, [blockEdit]);
 
-  const handleRawChange = (nextBody: string) => {
-    setRawBody(nextBody);
+  const getEditableBlockAtPos = (pos: number) => {
+    if (!editor) return null;
+    const resolved = editor.state.doc.resolve(pos);
+    const preferred = new Set([
+      "listItem",
+      "blockquote",
+      "codeBlock",
+      "heading",
+      "paragraph",
+      "image",
+      "horizontalRule",
+      "bulletList",
+      "orderedList",
+      "table",
+    ]);
+
+    for (let depth = resolved.depth; depth > 0; depth -= 1) {
+      const node = resolved.node(depth);
+      if (!preferred.has(node.type.name)) continue;
+      const from = resolved.before(depth);
+      return {
+        node,
+        from,
+        to: from + node.nodeSize,
+      };
+    }
+
+    return null;
+  };
+
+  const restoreHiddenBlock = () => {
+    if (hiddenBlockRef.current) {
+      hiddenBlockRef.current.style.opacity = "";
+      hiddenBlockRef.current.style.pointerEvents = "";
+      hiddenBlockRef.current = null;
+    }
+  };
+
+  const openBlockEditor = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!editor) return;
-    editor.commands.setContent(nextBody, false);
+
+    const pos = editor.view.posAtCoords({
+      left: event.clientX,
+      top: event.clientY,
+    })?.pos;
+    if (typeof pos !== "number") return;
+
+    const target = getEditableBlockAtPos(pos);
+    if (!target) return;
+
+    const nodeDom = editor.view.nodeDOM(target.from) as HTMLElement | null;
+    if (!nodeDom) return;
+
+    const serializer = (editor.storage as MarkdownStorage & {
+      markdown?: {
+        serializer?: { serialize: (content: unknown) => string };
+      };
+    }).markdown?.serializer;
+    if (!serializer) return;
+
+    const nodeRect = nodeDom.getBoundingClientRect();
+
+    // 렌더 전에 즉시 숨김 (effect 딜레이 없음)
+    nodeDom.style.opacity = "0";
+    nodeDom.style.pointerEvents = "none";
+    hiddenBlockRef.current = nodeDom;
+
+    setBlockEdit({
+      from: target.from,
+      to: target.to,
+      markdown: serializer.serialize(target.node).trimEnd(),
+      top: nodeRect.top,       // 뷰포트 좌표
+      left: nodeRect.left,
+      width: nodeRect.width,
+      minHeight: Math.max(nodeRect.height, 44),
+    });
+  };
+
+  const commitBlockEdit = () => {
+    if (!editor || !blockEdit) return;
+    restoreHiddenBlock();
+    editor.commands.insertContentAt(
+      { from: blockEdit.from, to: blockEdit.to },
+      blockEdit.markdown
+    );
+    setBlockEdit(null);
+    editor.commands.focus();
+  };
+
+  const cancelBlockEdit = () => {
+    restoreHiddenBlock();
+    setBlockEdit(null);
+    editor?.commands.focus();
   };
 
   const handleSave = async () => {
-    const body = rawMode
-      ? rawBody
-      : (editor?.storage as MarkdownStorage | undefined)?.markdown?.getMarkdown?.() ??
-        rawBody;
+    const body =
+      (editor?.storage as MarkdownStorage | undefined)?.markdown?.getMarkdown?.() ??
+      rawBody;
 
     setSaving(true);
     try {
@@ -406,9 +505,13 @@ export default function AboutEditor() {
         </div>
       </div>
       <div className="editor-scroll">
-        <div className="editor-inner" style={{ paddingTop: 8 }}>
-          {!rawMode && editor && <FloatingBubbleMenu editor={editor} />}
-          {!rawMode && slashState.show && slashState.items.length > 0 && (
+        <div
+          ref={editorInnerRef}
+          className="editor-inner"
+          style={{ paddingTop: 8 }}
+        >
+          {!blockEdit && editor && <FloatingBubbleMenu editor={editor} />}
+          {!blockEdit && slashState.show && slashState.items.length > 0 && (
             <SlashMenu
               items={slashState.items}
               selectedIndex={slashState.index}
@@ -417,40 +520,55 @@ export default function AboutEditor() {
               }}
             />
           )}
-          <div onDoubleClick={() => setRawMode(true)}>
-            {rawMode ? (
-              <textarea
-                ref={rawTextareaRef}
-                value={rawBody}
-                onChange={e => handleRawChange(e.target.value)}
-                onBlur={() => setRawMode(false)}
-                onKeyDown={e => {
-                  if (e.key === "Escape") {
-                    e.preventDefault();
-                    setRawMode(false);
-                  }
-                }}
-                spellCheck={false}
-                style={{
-                  width: "100%",
-                  minHeight: "70vh",
-                  resize: "vertical",
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  color: "inherit",
-                  fontSize: 15,
-                  lineHeight: 1.8,
-                  fontFamily:
-                    "var(--font-orbit), 'SFMono-Regular', Consolas, monospace",
-                }}
-              />
-            ) : (
-              <EditorContent editor={editor} />
-            )}
+          <div onDoubleClick={openBlockEditor}>
+            <EditorContent editor={editor} />
           </div>
         </div>
       </div>
+      {blockEdit && (
+        <textarea
+          ref={blockTextareaRef}
+          value={blockEdit.markdown}
+          onChange={e =>
+            setBlockEdit(current =>
+              current ? { ...current, markdown: e.target.value } : current
+            )
+          }
+          onBlur={commitBlockEdit}
+          onKeyDown={e => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              cancelBlockEdit();
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              commitBlockEdit();
+            }
+          }}
+          spellCheck={false}
+          style={{
+            position: "fixed",
+            top: blockEdit.top,
+            left: blockEdit.left,
+            width: blockEdit.width,
+            minHeight: blockEdit.minHeight,
+            resize: "none",
+            border: "1.5px solid #6366f1",
+            borderRadius: 6,
+            outline: "none",
+            background: "#fff",
+            color: "#111",
+            fontSize: 15,
+            lineHeight: 1.7,
+            padding: "2px 4px",
+            boxShadow: "0 2px 12px rgba(99,102,241,.15)",
+            fontFamily: "var(--font-orbit), 'SFMono-Regular', Consolas, monospace",
+            zIndex: 9999,
+            overflow: "hidden",
+            boxSizing: "border-box",
+          }}
+        />
+      )}
     </div>
   );
 }

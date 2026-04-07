@@ -1,22 +1,28 @@
 import { Image } from "@tiptap/extension-image";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import type { NodeViewProps } from "@tiptap/react";
 
 type Align = "left" | "center" | "right" | null;
 
-function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps) {
+function ResizableImageView({
+  node,
+  updateAttributes,
+  selected,
+  editor,
+  getPos,
+}: NodeViewProps) {
   const { src, alt, title, width, align } = node.attrs as {
-    src: string; alt: string; title: string; width: number | null; align: Align;
+    src: string;
+    alt: string;
+    title: string;
+    width: number | null;
+    align: Align;
   };
-  const [inputWidth, setInputWidth] = useState(width ? String(width) : "");
+  const [isDragging, setIsDragging] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const drag = useRef<{ startX: number; startW: number; dir: 1 | -1 } | null>(null);
-
-  useEffect(() => {
-    setInputWidth(width ? String(width) : "");
-  }, [width]);
 
   const startResize = useCallback(
     (e: React.MouseEvent, dir: 1 | -1) => {
@@ -31,26 +37,74 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
         const newW = Math.max(50, Math.round(drag.current.startW + dx));
         updateAttributes({ width: newW });
       };
+
       const onUp = () => {
         drag.current = null;
         document.removeEventListener("mousemove", onMove);
         document.removeEventListener("mouseup", onUp);
       };
+
       document.addEventListener("mousemove", onMove);
       document.addEventListener("mouseup", onUp);
     },
     [width, updateAttributes]
   );
 
+  const selectCurrentNode = useCallback(() => {
+    const pos = typeof getPos === "function" ? getPos() : getPos;
+    if (typeof pos !== "number") return;
+    editor.commands.setNodeSelection(pos);
+  }, [editor, getPos]);
+
   const wrapperStyle: React.CSSProperties = {
-    display: align ? "block" : "inline-block",
+    display: "inline-block",
     position: "relative",
     verticalAlign: "middle",
-    ...(align === "center" ? { marginLeft: "auto", marginRight: "auto" } : {}),
-    ...(align === "right" ? { marginLeft: "auto" } : {}),
-    ...(align === "left" ? { marginRight: "auto" } : {}),
-    width: width ? `${width}px` : "fit-content",
+    lineHeight: 0,
+    width: width ? `${width}px` : "auto",
     maxWidth: "100%",
+  };
+
+  const outlineStyle: React.CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    border: "1px solid #c7c7cc",
+    borderRadius: 0,
+    pointerEvents: "none",
+    zIndex: 10,
+  };
+
+  const handleStyle = (side: "left" | "right"): React.CSSProperties => ({
+    position: "absolute",
+    top: "50%",
+    [side]: -5,
+    transform: "translateY(-50%)",
+    width: 10,
+    height: 36,
+    borderRadius: 0,
+    background: "#f5f5f7",
+    border: "1px solid #d2d2d7",
+    boxShadow: "0 2px 8px rgba(0,0,0,.06)",
+    cursor: "ew-resize",
+    zIndex: 25,
+  });
+
+  const toolbarStyle: React.CSSProperties = {
+    position: "absolute",
+    top: "calc(100% + 8px)",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 2,
+    padding: "4px",
+    borderRadius: 999,
+    border: "1px solid rgba(60,60,67,.16)",
+    background: "rgba(255,255,255,.98)",
+    boxShadow: "0 4px 16px rgba(0,0,0,.08)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    zIndex: 30,
   };
 
   return (
@@ -58,60 +112,62 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
       as="span"
       style={wrapperStyle}
       className={`resizable-image-wrapper${selected ? " is-selected" : ""}`}
+      onMouseDown={() => {
+        if (!selected) selectCurrentNode();
+      }}
     >
       <img
         ref={imgRef}
         src={src}
         alt={alt ?? ""}
         title={title ?? undefined}
-        style={{
-          width: width ? "100%" : "auto",
-          maxWidth: "100%",
-          display: "inline-block",
-          verticalAlign: "middle",
+        data-drag-handle
+        draggable={true}
+        style={{ width: width ? "100%" : "auto", maxWidth: "100%", display: "block" }}
+        onDragStart={e => {
+          selectCurrentNode();
+          setIsDragging(true);
+          e.dataTransfer.effectAllowed = "move";
         }}
+        onDragEnd={() => setIsDragging(false)}
       />
+      {(selected || isDragging) && <span style={outlineStyle} />}
       {selected && (
         <>
-          <span className="resize-handle resize-handle-w" onMouseDown={e => startResize(e, -1)} />
-          <span className="resize-handle resize-handle-e" onMouseDown={e => startResize(e, 1)} />
-          <span className="image-toolbar" contentEditable={false}>
-            <span className="image-align-btns">
-              {(["left", "center", "right"] as const).map(a => (
-                <button
-                  key={a}
-                  className={`img-toolbar-btn${align === a ? " active" : ""}`}
-                  onMouseDown={e => { e.preventDefault(); updateAttributes({ align: align === a ? null : a }); }}
-                  title={a === "left" ? "왼쪽 정렬" : a === "center" ? "가운데 정렬" : "오른쪽 정렬"}
-                >
-                  {a === "left" ? <AlignLeft size={12} /> : a === "center" ? <AlignCenter size={12} /> : <AlignRight size={12} />}
-                </button>
-              ))}
-            </span>
-            <span className="image-width-control">
-              <input
-                type="number"
-                value={inputWidth}
-                onChange={e => setInputWidth(e.target.value)}
-                onBlur={() => {
-                  if (!inputWidth.trim()) {
-                    updateAttributes({ width: null });
-                    setInputWidth("");
-                    return;
-                  }
-                  const n = parseInt(inputWidth, 10);
-                  if (!isNaN(n) && n >= 50) updateAttributes({ width: n });
-                  else setInputWidth(width ? String(width) : "");
+          <span
+            style={handleStyle("left")}
+            onMouseDown={e => startResize(e, -1)}
+          />
+          <span
+            style={handleStyle("right")}
+            onMouseDown={e => startResize(e, 1)}
+          />
+          <span style={toolbarStyle} contentEditable={false}>
+            {(["left", "center", "right"] as const).map(a => (
+              <button
+                key={a}
+                onMouseDown={e => {
+                  e.preventDefault();
+                  updateAttributes({ align: align === a ? null : a });
                 }}
-                onKeyDown={e => {
-                  if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                  e.stopPropagation();
+                title={a === "left" ? "왼쪽" : a === "center" ? "가운데" : "오른쪽"}
+                style={{
+                  width: 24,
+                  height: 24,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 999,
+                  border: "none",
+                  background: align === a ? "#1d1d1f" : "transparent",
+                  color: align === a ? "#fff" : "#6e6e73",
+                  cursor: "pointer",
+                  transition: "background 120ms ease, color 120ms ease",
                 }}
-                min={50}
-                placeholder="너비"
-              />
-              <span>px</span>
-            </span>
+              >
+                {a === "left" ? <AlignLeft size={11} /> : a === "center" ? <AlignCenter size={11} /> : <AlignRight size={11} />}
+              </button>
+            ))}
           </span>
         </>
       )}
@@ -120,11 +176,12 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
 }
 
 export const ResizableImage = Image.extend({
-  addOptions() {
-    return {
-      ...this.parent?.(),
-      inline: true,
-    };
+  inline() {
+    return true;
+  },
+
+  group() {
+    return "inline";
   },
 
   addAttributes() {
@@ -158,34 +215,24 @@ export const ResizableImage = Image.extend({
       markdown: {
         serialize(
           state: { write: (value: string) => void },
-          node: {
-            attrs: {
-              src: string;
-              alt?: string | null;
-              title?: string | null;
-              width?: number | null;
-              align?: Align;
-            };
-          }
+          node: { attrs: { src: string; alt?: string | null; title?: string | null; width?: number | null; align?: Align } }
         ) {
           const { src, alt, title, width, align } = node.attrs;
           if (width || align) {
             let styleVal = "";
-            if (align === "center") styleVal = "display:block;margin:0 auto";
-            else if (align === "right") styleVal = "display:block;margin-left:auto";
-            else if (align === "left") styleVal = "display:block;margin-right:auto";
-            const attrs = [
+            if (align === "center") styleVal = "display:inline-block;margin:0 auto";
+            else if (align === "right") styleVal = "display:inline-block;margin-left:auto";
+            else if (align === "left") styleVal = "display:inline-block;margin-right:auto";
+            const attrStr = [
               `src="${src}"`,
               alt ? `alt="${alt}"` : "",
               title ? `title="${title}"` : "",
               width ? `width="${width}"` : "",
               styleVal ? `style="${styleVal}"` : "",
             ].filter(Boolean).join(" ");
-            state.write(`<img ${attrs}>`);
+            state.write(`<img ${attrStr}>`);
           } else {
-            state.write(
-              `![${(alt ?? "").replace(/[[\]]/g, "\\$&")}](${src}${title ? ` "${title}"` : ""})`
-            );
+            state.write(`![${(alt ?? "").replace(/[[\]]/g, "\\$&")}](${src}${title ? ` "${title}"` : ""})`);
           }
         },
         parse: {},
