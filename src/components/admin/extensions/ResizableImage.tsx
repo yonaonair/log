@@ -43,8 +43,9 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
   );
 
   const wrapperStyle: React.CSSProperties = {
-    display: "block",
+    display: align ? "block" : "inline-block",
     position: "relative",
+    verticalAlign: "middle",
     ...(align === "center" ? { marginLeft: "auto", marginRight: "auto" } : {}),
     ...(align === "right" ? { marginLeft: "auto" } : {}),
     ...(align === "left" ? { marginRight: "auto" } : {}),
@@ -115,6 +116,13 @@ function ResizableImageView({ node, updateAttributes, selected }: NodeViewProps)
 }
 
 export const ResizableImage = Image.extend({
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      inline: true,
+    };
+  },
+
   addAttributes() {
     return {
       ...this.parent?.(),
