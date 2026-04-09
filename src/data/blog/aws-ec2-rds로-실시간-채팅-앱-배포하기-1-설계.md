@@ -13,6 +13,7 @@ tags:
   - aws
   - app
 series: web
+category: Tech
 ---
 # 동기
 

@@ -9,36 +9,40 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Card from "@/components/Card.astro";
 import Pagination from "@/components/Pagination.astro";
-import getUniqueSeries from "@/utils/getUniqueSeries";
+import getCategoryTree from "@/utils/getCategoryTree";
 import getPostsBySeries from "@/utils/getPostsBySeries";
 import { SITE } from "@/config";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const posts = await getCollection("blog");
-  const seriesList = getUniqueSeries(posts);
+  const tree = getCategoryTree(posts);
 
-  return seriesList.flatMap(({ series, seriesName }) => {
-    const seriesPosts = getPostsBySeries(posts, series);
-    return paginate(seriesPosts, {
-      params: { series },
-      props: { seriesName },
-      pageSize: SITE.postPerPage,
-    });
-  });
+  return tree.flatMap(({ category, categoryName, seriesNodes }) =>
+    seriesNodes.flatMap(({ series, seriesName }) => {
+      const seriesPosts = getPostsBySeries(posts, category, series);
+      return paginate(seriesPosts, {
+        params: { category, series },
+        props: { categoryName, seriesName },
+        pageSize: SITE.postPerPage,
+      });
+    })
+  );
 }
 
-const { series } = Astro.params;
-const { page, seriesName } = Astro.props;
+const { category, series } = Astro.params;
+const { page, categoryName, seriesName } = Astro.props;
 ---
 
-<Layout title={`Series: ${seriesName} | ${SITE.title}`}>
+<Layout title={`${seriesName} | ${categoryName} | ${SITE.title}`}>
   <Header />
   <Main
-    pageTitle={[`Series:`, `${seriesName}`]}
+    pageTitle={[`${categoryName} /`, `${seriesName}`]}
     titleTransition={series}
-    pageDesc={`All posts in the "${seriesName}" series.`}
+    pageDesc={`"${seriesName}" 시리즈의 모든 글`}
   >
-    <h1 slot="title" transition:name={series}>{`Series: ${seriesName}`}</h1>
+    <h1 slot="title" transition:name={series}>
+      {categoryName} / {seriesName}
+    </h1>
     <ul>
       {page.data.map(data => <Card {...data} />)}
     </ul>

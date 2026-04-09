@@ -1,0 +1,58 @@
+---
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import getCategoryTree from "@/utils/getCategoryTree";
+import { SITE } from "@/config";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  const tree = getCategoryTree(posts);
+
+  return tree.map(({ category, categoryName, seriesNodes, totalPosts }) => ({
+    params: { category },
+    props: { categoryName, seriesNodes, totalPosts },
+  }));
+}
+
+const { category } = Astro.params;
+const { categoryName, seriesNodes, totalPosts } = Astro.props;
+---
+
+<Layout title={`${categoryName} | Series | ${SITE.title}`}>
+  <Header />
+  <Main
+    pageTitle={["Series /", categoryName]}
+    titleTransition={category}
+    pageDesc={`${categoryName} 카테고리의 시리즈 목록 (총 ${totalPosts}편)`}
+  >
+    <h1 slot="title" transition:name={category}>
+      Series / {categoryName}
+    </h1>
+    <ul class="flex flex-col gap-6">
+      {
+        seriesNodes.map(({ series, seriesName, count }) => (
+          <li>
+            <a
+              href={`/series/${category}/${series}/`}
+              class:list={[
+                "flex items-baseline gap-2",
+                "border-b-2 border-dashed border-foreground text-lg",
+                "hover:-mt-0.5 hover:border-accent hover:text-accent",
+                "focus-visible:border-none focus-visible:text-accent",
+              ]}
+            >
+              {seriesName}
+              <span class="text-sm opacity-60">{count}편</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Main>
+  <Footer />
+</Layout>

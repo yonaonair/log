@@ -96,6 +96,7 @@ export interface PostMeta {
   pubDatetime: string;
   author: string;
   series: string;
+  category: string;
 }
 
 interface Props {
@@ -305,6 +306,7 @@ export default function Editor({
     pubDatetime: initialMeta?.pubDatetime ?? new Date().toISOString(),
     author: initialMeta?.author ?? "",
     series: initialMeta?.series ?? "",
+    category: initialMeta?.category ?? "",
   });
   const [slugEdited, setSlugEdited] = useState(!isNew);
   const [saveState, setSaveState] = useState<
@@ -1219,13 +1221,29 @@ export default function Editor({
               />
             </div>
 
-            {/* 시리즈 */}
+            {/* 대분류 */}
             <div
               className="meta-field"
               style={{ display: "flex", flexDirection: "column", gap: "6px" }}
             >
               <label style={{ fontSize: "12px", color: "#6b7280" }}>
-                시리즈
+                대분류
+              </label>
+              <input
+                value={meta.category}
+                onChange={e => setMeta(m => ({ ...m, category: e.target.value }))}
+                placeholder="예: Tech, Learning, Projects"
+                style={inputStyle}
+              />
+            </div>
+
+            {/* 시리즈 (중분류) */}
+            <div
+              className="meta-field"
+              style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+            >
+              <label style={{ fontSize: "12px", color: "#6b7280" }}>
+                시리즈 (중분류)
               </label>
               <input
                 value={meta.series}

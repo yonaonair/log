@@ -26,6 +26,7 @@ export const GET: APIRoute = async () => {
         featured: data.featured ?? false,
         tags: data.tags ?? [],
         series: data.series ?? "",
+        category: data.category ?? "",
         file: f,
       };
     })
@@ -44,7 +45,7 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json();
-  const { title, slug, description, tags, featured, draft, pubDatetime, content, author, series } = body;
+  const { title, slug, description, tags, featured, draft, pubDatetime, content, author, series, category } = body;
 
   if (!slug) return new Response("slug required", { status: 400 });
 
@@ -60,6 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
   };
   if (author) frontmatter.author = author;
   if (series) frontmatter.series = series;
+  if (category) frontmatter.category = category;
 
   const fileContent = matter.stringify(content ?? "", frontmatter);
   const repoPath = `src/data/blog/${slug}.md`;

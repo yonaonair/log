@@ -48,7 +48,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
   if (!slug) return new Response("not found", { status: 404 });
 
   const body = await request.json();
-  const { title, description, tags, featured, draft, pubDatetime, content, author, series, newSlug } = body;
+  const { title, description, tags, featured, draft, pubDatetime, content, author, series, category, newSlug } = body;
 
   const existingPath = await findFile(slug);
   const targetSlug = newSlug ?? slug;
@@ -66,6 +66,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
   };
   if (author) frontmatter.author = author;
   if (series) frontmatter.series = series;
+  if (category) frontmatter.category = category;
 
   const fileContent = matter.stringify(content ?? "", frontmatter);
   const newRepoPath = `src/data/blog/${targetSlug}.md`;

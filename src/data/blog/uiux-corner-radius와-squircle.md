@@ -9,6 +9,7 @@ draft: false
 tags:
   - uiux
 series: web
+category: Tech
 ---
 모바일 UIUX 디자인을 기획하다 아무래도 요즘 모바일 환경에서 대다수가 사용하는 squircle에 대해 알아보게 됐다. 단순히 Corner Radius 값을 준다고 생각했는데 그게 아니었다. squircle이라는 명칭도 그때 알았다.
 

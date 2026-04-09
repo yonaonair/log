@@ -21,6 +21,7 @@ const blog = defineCollection({
       hideEditPost: z.boolean().optional(),
       timezone: z.string().optional(),
       series: z.string().optional(),
+      category: z.string().optional(),
     }),
 });
 

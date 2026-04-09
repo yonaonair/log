@@ -10,6 +10,7 @@ tags:
   - docker
   - docs
 series: container tech
+category: Tech
 ---
 <div url="https://docs.docker.com/get-started/docker-overview/" title="What is Docker?" description="Get an in-depth overview of the Docker platform including what it can be used for, the architecture it employs, and its underlying technology." image="https://docs.docker.com/images/thumbnail.webp" sitename="Docker Documentation" favicon="https://www.google.com/s2/favicons?domain=docs.docker.com&amp;sz=32" data-type="bookmark">
 </div>

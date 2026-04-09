@@ -10,6 +10,7 @@ tags:
   - lunux
   - docs
 series: linux
+category: Tech
 ---
 
 <div url="https://killercoda.com/pawelpiwosz/course/linuxFundamentals" title="Pawel Piwosz | Killercoda" description="DevOps Institute Ambassador. CD.Foundation Ambassador. AWS Community Builder. 
