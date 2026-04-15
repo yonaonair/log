@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:55:18.471Z
+modDatetime: 2026-04-15T02:56:39.732Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -59,5 +59,9 @@ tags: []
 - AWS EC2`에서 P `PostgreSQL을 직접 설치해서 운영한다면 직접 처리해야 하는 일들: 
 
 <div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
-<p>(1) OS  업데이트 및 보안 패치 </p><p>(2} PostgreSQL 버전 업그레이드 </p><p>(3) 백업 스케줄링 (cron + pg_dump 또는 WAL 아카이빙</p><p>(4) 장애 발생 시 복구 절차 </p><p>(5) 연결 풀림 (pg_bouncer 등) </p><p>(6) SSL/TIS  설정</p><p>(7) 방화벽 및 인카운드 규칙 설정</p><p>(8) 모니터링 (CPU,  메모리 ,디스크, 커넥션 수” </p><p>]</p>
+<p>(1) OS  업데이트 및 보안 패치 </p><p>(2} PostgreSQL 버전 업그레이드 </p><p>(3) 백업 스케줄링 (cron + pg_dump 또는 WAL 아카이빙</p><p>(4) 장애 발생 시 복구 절차 </p><p>(5) 연결 풀림 (pg_bouncer 등) </p><p>(6) SSL/TIS  설정</p><p>(7) 방화벽 및 인카운드 규칙 설정</p><p>(8) 모니터링 (CPU,  메모리 ,디스크, 커넥션 수) </p>
 </div>
+
+소규모 프로젝트에서 이러한 진행은 비효율적이다. 모든 것을 관리해야 하기 때문이다. 
+
+## 3-2. Supabase가 추상화하는 것들 
