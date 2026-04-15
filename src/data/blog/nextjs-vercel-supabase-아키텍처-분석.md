@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:26:08.925Z
+modDatetime: 2026-04-15T02:33:16.261Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -31,3 +31,15 @@ tags: []
 2-1. 정적 자산이 전세계에 배포되는 방법
 
 `Vercel` 이나 `Netlify`에 `Next.js` 프로젝트를 푸시하면 내부적으로 일어나는 과정이 있다. 
+
+<div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
+<p>(1) Git push → CI/CD 파이프라인 트리거 </p><p>(2) 빌드 서버에서 <code>next build</code> 실행 </p><p>(3) 결과물 분류 : </p><ul class="tight" data-tight="true"><li><p><code>/public</code> 및 <code>.next/static</code> → 정적 자산 (HTML, CSS, JS, 이미지) </p></li><li><p><code>API Routes / Server Components</code> → 서버리스 함수 (Lambda-like) </p></li></ul><p>(4) 정적 자산 → <code>CDN (Content Delivery Network)</code> 엣지 노드 전체에 복제 </p><p>(5) 서버리스 함수 → 요청이 들어올 때마다 실행 (<code>cold start</code> 발생 가능)</p>
+</div>
+
+### CDN (Content Delivery Network) 
+
+전 세계 여러 지역에 분산된 서버 노드들의 네트워크. 사용자가 어떤 사이트에 접속하면 미국 원본 서버까지 가지 않고 가장 가까운 곳의 엣지 노드에서 정적 파일을 받아온다. 
+
+/mermaid 다이어그램 
+
+`Vercel`은 `Edge Network`를 통해 100개 이상의 리전에 자산을 배포한다. ` Cash-Control`  헤더를 잘 설정하면 앳지 케시 히트율을 올릴 수 있고 결과적으로 원본 서버 부하의 속도를 줄이기 때문에 응답 속도가 빨라진다. 
