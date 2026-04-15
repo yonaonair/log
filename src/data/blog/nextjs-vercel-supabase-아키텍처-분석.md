@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:50:10.981Z
+modDatetime: 2026-04-15T02:52:50.302Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -59,5 +59,5 @@ tags: []
 - AWS EC2`에서 P `PostgreSQL을 직접 설치해서 운영한다면 직접 처리해야 하는 일들: 
 
 <div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
-<p>(1) OS  업데이트 및 보안 패치 </p><p>(2} </p>
+<p>(1) OS  업데이트 및 보안 패치 </p><p>(2} Postgre</p>
 </div>
