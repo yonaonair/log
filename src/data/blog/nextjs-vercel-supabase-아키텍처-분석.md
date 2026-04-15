@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:41:41.353Z
+modDatetime: 2026-04-15T02:43:27.199Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -50,7 +50,6 @@ tags: []
 
 `Next.js`의 `API Routes`나 `Server Actions`는 `Vercel / Netlify`에서 서버리스 함수로 실행되는데, 이것은 전통적인 의미, 즉 항상 켜져있는 서버와는 다르다. 
 
-| 구분 |  |  |
-| --- | --- | --- |
-|  |  |  |
-|  |  |  |
+<table style="min-width: 75px;">
+<colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th colspan="1" rowspan="1"><p>구분</p></th><th colspan="1" rowspan="1"><p>전통 서버</p></th><th colspan="1" rowspan="1"><p>서버리스 함수</p></th></tr><tr><td colspan="1" rowspan="1"><p>실행방식</p></td><td colspan="1" rowspan="1"><p>항상 대기중 </p></td><td colspan="1" rowspan="1"><p>요청이 들어올 때만 실행 </p></td></tr><tr><td colspan="1" rowspan="1"><p>비용 </p><p>상태 <code>State</code> </p><p>콜드 스타트</p><p>스케일링 </p></td><td colspan="1" rowspan="1"><p></p></td><td colspan="1" rowspan="1"><p></p><p></p><p></p></td></tr></tbody>
+</table>
