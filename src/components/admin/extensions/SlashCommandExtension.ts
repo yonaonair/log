@@ -55,6 +55,10 @@ export const getSlashCommands = (): SlashCommandItem[] => [
     },
   },
   {
+    title: "Mermaid 다이어그램", description: "플로우차트 · 시퀀스 다이어그램 등", icon: "◈",
+    command: ed => ed.chain().focus().insertContent({ type: "mermaidBlock", attrs: { code: "graph TD\n  A --> B" } }).run(),
+  },
+  {
     title: "주석", description: "텍스트에 각주 달기", icon: "※",
     command: ed => {
       const text = prompt("주석을 달 텍스트:");

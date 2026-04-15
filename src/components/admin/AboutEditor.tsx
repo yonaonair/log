@@ -35,7 +35,8 @@ import { common, createLowlight } from "lowlight";
 import { Markdown } from "tiptap-markdown";
 import { MessageBubble } from "./extensions/MessageBubble";
 import { Callout } from "./extensions/Callout";
-import { HlYellow, HlBlue } from "./extensions/YellowHighlightRule";
+import { HlYellow, HlBlue, HlInputRules } from "./extensions/YellowHighlightRule";
+import { MermaidBlock } from "./extensions/MermaidBlock";
 import {
   SlashCommands,
   getSlashCommands,
@@ -203,6 +204,8 @@ export default function AboutEditor() {
   const blockTextareaRef = useRef<HTMLTextAreaElement>(null);
   const editorInnerRef = useRef<HTMLDivElement>(null);
   const hiddenBlockRef = useRef<HTMLElement | null>(null);
+  // Keep a ref to the latest blockEdit so commitBlockEdit doesn't use stale state
+  const blockEditRef = useRef<typeof blockEdit>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -231,6 +234,8 @@ export default function AboutEditor() {
       MarkdownTypingRules,
       HlYellow,
       HlBlue,
+      HlInputRules,
+      MermaidBlock,
       SlashCommands.configure({
         suggestion: {
           char: "/",
@@ -364,11 +369,20 @@ export default function AboutEditor() {
     return () => dom.removeEventListener("paste", handlePaste, true);
   }, [editor]);
 
+  // Keep blockEditRef in sync so commitBlockEdit always uses the latest markdown
   useEffect(() => {
-    if (!blockEdit || !blockTextareaRef.current) return;
+    blockEditRef.current = blockEdit;
+  }, [blockEdit]);
+
+  // Focus/select ONLY when a new block is opened (position changes), not on every keystroke
+  // Using from+to as the key prevents .select() from firing each time markdown updates
+  const blockEditKey = blockEdit ? `${blockEdit.from}-${blockEdit.to}` : null;
+  useEffect(() => {
+    if (!blockEditKey || !blockTextareaRef.current) return;
     blockTextareaRef.current.focus();
     blockTextareaRef.current.select();
-  }, [blockEdit]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockEditKey]);
 
   const getEditableBlockAtPos = (pos: number) => {
     if (!editor) return null;
@@ -449,13 +463,15 @@ export default function AboutEditor() {
   };
 
   const commitBlockEdit = () => {
-    if (!editor || !blockEdit) return;
+    const be = blockEditRef.current;
+    if (!editor || !be) return;
     restoreHiddenBlock();
     editor.commands.insertContentAt(
-      { from: blockEdit.from, to: blockEdit.to },
-      blockEdit.markdown
+      { from: be.from, to: be.to },
+      be.markdown
     );
     setBlockEdit(null);
+    blockEditRef.current = null;
     editor.commands.focus();
   };
 

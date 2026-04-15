@@ -24,7 +24,8 @@ import TableToolbar from "./TableToolbar";
 import { MessageBubble } from "./extensions/MessageBubble";
 import { Bookmark } from "./extensions/Bookmark";
 import { Callout } from "./extensions/Callout";
-import { HlYellow, HlBlue } from "./extensions/YellowHighlightRule";
+import { HlYellow, HlBlue, HlInputRules } from "./extensions/YellowHighlightRule";
+import { MermaidBlock } from "./extensions/MermaidBlock";
 import {
   SlashCommands,
   getSlashCommands,
@@ -364,7 +365,7 @@ export default function Editor({
       Link.configure({ openOnClick: false }),
       ResizableImage,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Table,
+      Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
       TableCell,
@@ -380,6 +381,8 @@ export default function Editor({
       TabIndent,
       HlYellow,
       HlBlue,
+      HlInputRules,
+      MermaidBlock,
       SlashCommands.configure({
         suggestion: {
           char: "/",

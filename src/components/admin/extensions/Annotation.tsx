@@ -76,19 +76,35 @@ export const Annotation = Node.create({
     return ReactNodeViewRenderer(AnnotationView);
   },
 
-  // Input rule: [annotated text](note content) → annotation node
+  // Input rules:
+  //   word^[footnote content]   (Pandoc inline footnote style)
+  //   [annotated text](^note)   (legacy style)
   addInputRules() {
     return [
+      // word^[content] → annotation { text: word, note: content }
       new InputRule({
-        find: /\[([^\]]+)\]\(\^([^)]+)\)$/,
-        handler: ({ state, range, match }) => {
+        find: /(\S+)\^\[([^\]]+)\]$/,
+        handler: ({ chain, range, match }) => {
           const text = match[1];
           const note = match[2];
-          if (!text || !note) return null;
-          const { tr } = state;
-          const node = state.schema.nodes.annotation.create({ text, note });
-          tr.replaceWith(range.from, range.to, node);
-          return null;
+          if (!text || !note) return;
+          chain()
+            .deleteRange(range)
+            .insertContent({ type: "annotation", attrs: { text, note } })
+            .run();
+        },
+      }),
+      // [text](^note) → annotation (legacy syntax)
+      new InputRule({
+        find: /\[([^\]]+)\]\(\^([^)]+)\)$/,
+        handler: ({ chain, range, match }) => {
+          const text = match[1];
+          const note = match[2];
+          if (!text || !note) return;
+          chain()
+            .deleteRange(range)
+            .insertContent({ type: "annotation", attrs: { text, note } })
+            .run();
         },
       }),
     ];

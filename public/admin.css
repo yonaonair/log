@@ -1641,18 +1641,44 @@
 }
 
 .prose-editor ol {
-  list-style-type: decimal;
-  padding-left: 2em;
+  list-style-type: none;
+  counter-reset: editor-list-counter;
+  padding-left: 1.6em;
+  margin: 0.9em 0;
 }
 .prose-editor ol li {
-  padding-left: 0.3em;
+  position: relative;
+  counter-increment: editor-list-counter;
+}
+.prose-editor ol li::before {
+  position: absolute;
+  left: -1.6em;
+  width: 1.4em;
+  text-align: left;
+}
+@counter-style black-circled-editor-admin {
+  system: fixed;
+  symbols: "\2776" "\2777" "\2778" "\2779" "\277A" "\277B" "\277C" "\277D" "\277E" "\277F";
+  suffix: " ";
+  fallback: decimal;
+}
+/* level 1, 4, 7: 1. 2. 3. */
+.prose-editor ol li::before,
+.prose-editor ol ol ol ol li::before {
+  content: counter(editor-list-counter) ". ";
+}
+/* level 2, 5, 8: ❶ ❷ ❸ */
+.prose-editor ol ol li::before,
+.prose-editor ol ol ol ol ol li::before {
+  content: counter(editor-list-counter, black-circled-editor-admin);
+}
+/* level 3, 6, 9: (1) (2) (3) */
+.prose-editor ol ol ol li::before,
+.prose-editor ol ol ol ol ol ol li::before {
+  content: "(" counter(editor-list-counter) ")";
 }
 .prose-editor ol ol {
-  list-style-type: lower-alpha;
   margin: 0.3em 0;
-}
-.prose-editor ol ol ol {
-  list-style-type: lower-roman;
 }
 
 .prose-editor li {
@@ -1839,6 +1865,101 @@
   transition: border-color .15s;
 }
 .about-editor-textarea:focus { outline: none; border-color: #bbb; }
+
+/* ─── Mermaid Block ────────────────────────────────────────────────────────── */
+.mermaid-block-wrapper {
+  margin: 1.2em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e8e8e8;
+}
+
+.mermaid-editor {
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mermaid-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.mermaid-lang-label {
+  font-size: 11px;
+  color: #888;
+  font-family: 'Ubuntu Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.mermaid-render-btn {
+  font-size: 11px;
+  padding: 2px 10px;
+  background: #3a3a3a;
+  color: #ccc;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.mermaid-render-btn:hover { background: #4a4a4a; color: #fff; }
+
+.mermaid-textarea {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Ubuntu Mono', 'Interop', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  border: none;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  tab-size: 2;
+  box-sizing: border-box;
+}
+
+.mermaid-diagram {
+  padding: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: background .12s;
+  text-align: center;
+}
+.mermaid-diagram:hover { background: #fafafa; }
+.mermaid-diagram svg { max-width: 100%; height: auto; }
+
+.mermaid-empty {
+  padding: 24px;
+  color: #aaa;
+  font-size: 13px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.mermaid-error {
+  background: #fff5f5;
+}
+.mermaid-error-msg {
+  padding: 12px 16px;
+}
+.mermaid-error-msg pre {
+  font-size: 12px;
+  color: #c00;
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+}
+.mermaid-source {
+  color: #888 !important;
+  margin-top: 8px !important;
+}
 
 /* ─── Utilities ────────────────────────────────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }

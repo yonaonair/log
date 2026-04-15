@@ -10,43 +10,31 @@ export const MarkdownTypingRules = Extension.create({
     return [
       new InputRule({
         find: markdownLinkRegex,
-        handler: ({ editor, range, match }) => {
+        handler: ({ chain, range, match }) => {
           const [, text, href] = match;
-
           if (!text || !href) return;
-
-          editor
-            .chain()
-            .focus()
+          chain()
             .deleteRange(range)
-            .insertContent({
-              type: "text",
-              text,
-              marks: [{ type: "link", attrs: { href } }],
-            })
+            .insertContent({ type: "text", text, marks: [{ type: "link", attrs: { href } }] })
             .run();
         },
       }),
       new InputRule({
         find: markdownImageRegex,
-        handler: ({ editor, range, match }) => {
+        handler: ({ chain, range, match }) => {
           const [, alt, src, title] = match;
-
           if (!src) return;
-
-          editor
-            .chain()
-            .focus()
+          chain()
             .deleteRange(range)
-            .insertContent({
-              type: "image",
-              attrs: {
-                src,
-                alt: alt ?? "",
-                title: title ?? null,
-              },
-            })
+            .insertContent({ type: "image", attrs: { src, alt: alt ?? "", title: title ?? null } })
             .run();
+        },
+      }),
+      // => → →  (화살표 자동 변환)
+      new InputRule({
+        find: /=>$/,
+        handler: ({ chain, range }) => {
+          chain().deleteRange(range).insertContent("→").run();
         },
       }),
     ];

@@ -1,6 +1,8 @@
-import { Mark, markInputRule } from "@tiptap/core";
+import { Mark, Extension, InputRule } from "@tiptap/core";
 
-// "text" → 노란 배경 + 진한 회색 글자 (inline code 스타일)
+// ── Mark 정의 (렌더링 + 직렬화) ──────────────────────────────────────────────
+
+// "text" → 노란 배경 + 빨간 글자
 export const HlYellow = Mark.create({
   name: "hlYellow",
 
@@ -10,12 +12,6 @@ export const HlYellow = Mark.create({
 
   parseHTML() {
     return [{ tag: "span.hl-yellow" }];
-  },
-
-  addInputRules() {
-    return [
-      markInputRule({ find: /"([^"]+)"/, type: this.type }),
-    ];
   },
 
   addStorage() {
@@ -28,7 +24,7 @@ export const HlYellow = Mark.create({
   },
 });
 
-// 'text' → 파란 배경 + 파란 글자 (inline code 스타일)
+// 'text' → 파란 배경 + 파란 글자
 export const HlBlue = Mark.create({
   name: "hlBlue",
 
@@ -40,12 +36,6 @@ export const HlBlue = Mark.create({
     return [{ tag: "span.hl-blue" }];
   },
 
-  addInputRules() {
-    return [
-      markInputRule({ find: /'([^']+)'/, type: this.type }),
-    ];
-  },
-
   addStorage() {
     return {
       markdown: {
@@ -53,6 +43,41 @@ export const HlBlue = Mark.create({
         parse: {},
       },
     };
+  },
+});
+
+// ── 입력 규칙 (editor.chain() 패턴) ──────────────────────────────────────────
+
+export const HlInputRules = Extension.create({
+  name: "hlInputRules",
+
+  addInputRules() {
+    return [
+      // "text" → hlYellow
+      new InputRule({
+        find: /"([^"]+)"$/,
+        handler: ({ chain, range, match }) => {
+          const text = match[1];
+          if (!text) return;
+          chain()
+            .deleteRange(range)
+            .insertContent({ type: "text", text, marks: [{ type: "hlYellow" }] })
+            .run();
+        },
+      }),
+      // 'text' → hlBlue
+      new InputRule({
+        find: /'([^']+)'$/,
+        handler: ({ chain, range, match }) => {
+          const text = match[1];
+          if (!text) return;
+          chain()
+            .deleteRange(range)
+            .insertContent({ type: "text", text, marks: [{ type: "hlBlue" }] })
+            .run();
+        },
+      }),
+    ];
   },
 });
 
