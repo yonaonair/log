@@ -2,11 +2,16 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T05:16:43.279Z
+modDatetime: 2026-04-15T05:23:03.527Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
-draft: true
-tags: []
+draft: false
+tags:
+  - aws
+  - compute
+  - arcithecture
+  - infra
+category: infra & devops
 ---
 > 배포에 성공하기는 쉬웠다. 무수한 가이드가 인터넷에 있고 AI가 비약적인 발전을 거듭하는 시대니까. 하지만 알고 쓰지 않으면 잘 쓴 건지, 의도한 바에 일치하는지 점검할 수 없다. 그래서 글을 남겨둔다.
 
@@ -186,5 +191,11 @@ server {
 </div>
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>keyword: 프록시 Proxy </p><p>대리인이라는 뜻의 단어. “누구를” 대신하느냐에 따라 이름이 바뀜. </p><ul class="tight" data-tight="true"><li><p>포워드 프록시 Forward proxy </p></li><li><p>클라이언트가 외부 인</p></li></ul>
+<p>keyword: 프록시 Proxy </p><p>대리인이라는 뜻의 단어. “누구를” 대신하느냐에 따라 이름이 바뀜. </p><ul class="tight" data-tight="true"><li><p>포워드 프록시 Forward proxy </p><ul class="tight" data-tight="true"><li><p>클라이언트가 외부 인터넷에 접속할 때 정체를 숨기거나 특정 사이트 접근을 제한하기 위해 </p></li></ul></li><li><p>리버스 프록시 </p><ul class="tight" data-tight="true"><li><p>외부 사용자가 내 서버에 직접 접근하는 걸 막고 중간에서 요청을 대신 받아 내부 서버로 전달 </p></li></ul></li></ul><p>        → 실제 백엔드 서버의 IP와 포트 노출 X =&gt;  보안 용이 </p><p>        → <code>HTTPS</code> 암호화 해제 작업을 프록시가 전담해 백엔드 서버의 부하를 줄임</p><p>        → 자주 요청되는 정적 자원을 프록시가 저장해두고 즉시 응답 → 캐싱 </p>
 </div>
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<p>keyword: 로드 밸런싱 Load Balancing </p><p>부하(Load)를 균형있게 나누는 것. 서비스 규모가 커져서 서버 한 대 <code>single instance</code>로는 감당이 안 될 때 똑같은 서버를 여러 대 띄우고 트래픽을 분산시킴. </p><ul class="tight" data-tight="true"><li><p>동작: 리버스 프록시로 동작하는 <code>Nginx</code>가 요청 → 뒤에 있는 여러 대의 <code>Node.js</code> 서버 중 하나를 골라 요청을 던짐 </p></li><li><p>주요 알고리즘 </p></li></ul><p>(1) Round Robin: 순서대로 한번씩 돌아가며 전달</p><p>(2) Least Connections: 연결된 사용자가 가장 적은 서버로 전달 </p><p>(3) IP Hash: 특정 IP는 항상 특정 서버로 연결 </p>
+</div>
+
+인프라 위에서 돌아가는 소프트웨어만 들여다보다가 직접 해보니 그만큼 기반이 되는 인프라도 중요하다는 걸 알게 되었다. 옳거나 그른 스택이 아니라 서비스의 요구사항, 운영리소스에 맞게 조율해야 하는데, 너무 막연히 종류를 알고만 있었어서 애를 좀 먹었다. 다음 번에 할 때는 더 잘 할 수 있겠지? 
