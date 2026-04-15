@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T04:38:13.144Z
+modDatetime: 2026-04-15T04:42:06.954Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -46,7 +46,7 @@ tags: []
 
 `Vercel`은 `Edge Network`를 통해 100개 이상의 리전에 자산을 배포한다. ` Cash-Control`  헤더를 잘 설정하면 앳지 케시 히트율을 올릴 수 있고 결과적으로 원본 서버 부하의 속도를 줄이기 때문에 응답 속도가 빨라진다. 
 
-## 2-2. 서버리스 함수 (Serverless Function)의 작동방식 
+## 2-2. 서버리스 함수 (Serverless Function) 
 
 `Next.js`의 `API Routes`나 `Server Actions`는 `Vercel / Netlify`에서 서버리스 함수로 실행되는데, 이것은 전통적인 의미, 즉 항상 켜져있는 서버와는 다르다. 
 
@@ -54,7 +54,7 @@ tags: []
 <colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th colspan="1" rowspan="1"><p>구분</p></th><th colspan="1" rowspan="1"><p>전통 서버</p></th><th colspan="1" rowspan="1"><p>서버리스 함수</p></th></tr><tr><td colspan="1" rowspan="1"><p>실행방식</p></td><td colspan="1" rowspan="1"><p>항상 대기중 </p></td><td colspan="1" rowspan="1"><p>요청이 들어올 때만 실행 </p></td></tr><tr><td colspan="1" rowspan="1"><p>비용 </p></td><td colspan="1" rowspan="1"><p>고정 </p><ul class="tight" data-tight="true"><li><p>서버 운영 시간</p></li></ul></td><td colspan="1" rowspan="1"><p>종량제 </p><ul class="tight" data-tight="true"><li><p>실행 횟수 * 실행 시간 </p></li></ul></td></tr><tr><td colspan="1" rowspan="1"><p>상태 <code>State</code> </p></td><td colspan="1" rowspan="1"><p>메모리에 유지 OK</p></td><td colspan="1" rowspan="1"><p>요청마다 새 인스턴스 생성, 무상태 <code>state</code> (Statless) 구조</p></td></tr><tr><td colspan="1" rowspan="1"><p>콜드 스타트</p></td><td colspan="1" rowspan="1"><p>없음</p></td><td colspan="1" rowspan="1"><p>있음 </p><ul class="tight" data-tight="true"><li><p>첫 요청 시 지연</p></li></ul></td></tr><tr><td colspan="1" rowspan="1"><p>스케일링 </p></td><td colspan="1" rowspan="1"><p>수동 또는 오토스케일링 필요</p></td><td colspan="1" rowspan="1"><p>자동 </p><ul class="tight" data-tight="true"><li><p>프레픽에 따라 인스턴스 복제</p></li></ul></td></tr></tbody>
 </table>
 
-# 3. Managed 서비스의 이름
+# 3. Managed 서비스
 
 - AWS EC2`에서 P `PostgreSQL을 직접 설치해서 운영한다면 직접 처리해야 하는 일들: 
 
@@ -68,6 +68,10 @@ tags: []
 
 Supabase 는 `GpostgreSQL`을 기반으로 하면서도 운영 부담을 플랫폼 수준에서 처리해준다. 개발자가 직접 다루는 레이어는 스키마 설계와 쿼리 뿐이다. 
 
-<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<h3>Supabase 제공 기능</h3><p>(1) PostgreSQL (managed) </p>
+### Supabase 제공 기능
+
+### Supabase 제공 기능
+
+<div color="green" data-type="callout" data-color="green" class="callout callout-green">
+<p>Supabase 제공 기능</p><p>(1) <code>PostgreSQL</code> : managed</p><p>(2) Auth : <code>JWT</code> 기반, <code>OAuth</code> 포함</p><p>(3) Storage : 파일 업로드 → S3 호환 버킷 </p><p>(4) Realtime : 변경 감지 → WebSocket으로 브로드캐스트 </p><p>(5) Edge Functions : <code>Deno</code> 기반 서버리스 </p><p>(6) PostgREST : REST API 자동 생성</p>
 </div>
