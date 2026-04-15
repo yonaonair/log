@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T04:48:27.042Z
+modDatetime: 2026-04-15T04:56:22.235Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -37,7 +37,7 @@ tags: []
 </div>
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>keyword: 콜드스타트 (cold start) <br><br>서버리스 함수는 일정 시간 요청이 없으면 실행환경 또는 컨테이너가 내려간다. 새 요청이 들어오면 환경을 재부팅하는데 수백ms에서 수초까지 걸린다. <code>Vercel Edge Functions</code>는 <code>V8 isolate</code> 기반인데 코드스타터가 매우 짧지만 <code>Node.js</code> 런타임 기반 함수는 상대적으로 길다. </p>
+<p><strong>keyword: 콜드스타트 (cold start) </strong><br><br>서버리스 함수는 일정 시간 요청이 없으면 실행환경 또는 컨테이너가 내려간다. 새 요청이 들어오면 환경을 재부팅하는데 수백ms에서 수초까지 걸린다. <code>Vercel Edge Functions</code>는 <code>V8 isolate</code> 기반인데 코드스타터가 매우 짧지만 <code>Node.js</code> 런타임 기반 함수는 상대적으로 길다. </p>
 </div>
 
 ### CDN (Content Delivery Network) 
@@ -47,11 +47,11 @@ tags: []
 `Vercel`은 `Edge Network`를 통해 100개 이상의 리전에 자산을 배포한다. ` Cash-Control`  헤더를 잘 설정하면 앳지 케시 히트율을 올릴 수 있고 결과적으로 원본 서버 부하의 속도를 줄이기 때문에 응답 속도가 빨라진다. 
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>keyword: Cache-Control 헤더 </p><p>HTTP 응답 헤더. 브라우저와 CDN이 자원을 얼마나, 어디에, 어떤 방식으로 저장할 지 정의하는 지침서. </p>
+<p><strong>keyword: Cache-Control 헤더</strong> </p><p>HTTP 응답 헤더. 브라우저와 CDN이 자원을 얼마나, 어디에, 어떤 방식으로 저장할 지 정의하는 지침서. </p>
 </div>
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>keyword: 엣지 캐시 히트율 Edge Cache Hit Rate </p><p>전체 요청 중 원본 서버(origin)까지 가지 않고 CDN 엣지 노드에서 즉시 응답을 처리한 비율. 동일한 자원에 대해 캐시 키를 정규화하고 적절한 유효 기간을 설정, 히트율을 높이는 것이 인프라 비용 절감과 속도 개선의 핵심. </p>
+<p><strong>keyword: 엣지 캐시 히트율 Edge Cache Hit Rate </strong></p><p>전체 요청 중 원본 서버(origin)까지 가지 않고 CDN 엣지 노드에서 즉시 응답을 처리한 비율. 동일한 자원에 대해 캐시 키를 정규화하고 적절한 유효 기간을 설정, 히트율을 높이는 것이 인프라 비용 절감과 속도 개선의 핵심. </p>
 </div>
 
 ## 2-2. 서버리스 함수 (Serverless Function) 
@@ -77,13 +77,25 @@ tags: []
 Supabase 는 `GpostgreSQL`을 기반으로 하면서도 운영 부담을 플랫폼 수준에서 처리해준다. 개발자가 직접 다루는 레이어는 스키마 설계와 쿼리 뿐이다. 
 
 <div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
-<p>Supabase 제공 기능</p><p>(1) <code>PostgreSQL</code> : managed</p><p>(2) Auth : <code>JWT</code> 기반, <code>OAuth</code> 포함</p><p>(3) Storage : 파일 업로드 → S3 호환 버킷 </p><p>(4) Realtime : 변경 감지 → WebSocket으로 브로드캐스트 </p><p>(5) Edge Functions : <code>Deno</code> 기반 서버리스 </p><p>(6) PostgREST : REST API 자동 생성</p>
+<p><strong>Supabase 제공 기능</strong></p><p>(1) <code>PostgreSQL</code> : managed</p><p>(2) Auth : <code>JWT</code> 기반, <code>OAuth</code> 포함</p><p>(3) Storage : 파일 업로드 → S3 호환 버킷 </p><p>(4) Realtime : 변경 감지 → WebSocket으로 브로드캐스트 </p><p>(5) Edge Functions : <code>Deno</code> 기반 서버리스 </p><p>(6) PostgREST : REST API 자동 생성</p>
 </div>
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>keyword: WebSocket 브로드캐스트 Broadcast </p><p>특정 클라이언트로부터 전송된 메시지를 현재 연결된 모든 클라이언트에게 동시에 전송하는 이벤트 전파 방식. 단순 일대일 통신이 아니라 Pub/Sub(발행/구독) 패턴을 서버 레이어에서 추상화하여 대규모 사용자에게 실시간 상태를 동기화할 때 사용. </p>
+<p><strong>keyword: WebSocket 브로드캐스트 Broadcast </strong></p><p>특정 클라이언트로부터 전송된 메시지를 현재 연결된 모든 클라이언트에게 동시에 전송하는 이벤트 전파 방식. 단순 일대일 통신이 아니라 Pub/Sub(발행/구독) 패턴을 서버 레이어에서 추상화하여 대규모 사용자에게 실시간 상태를 동기화할 때 사용. </p>
 </div>
 
 <div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
-<p>내용을 입력하세요</p>
+<p><strong>keyword: S3 호환 버킷 (compatible API) </strong></p><p>AWS S3가 객체 스토리지 시장의 표준이 되면서 대다수의 스토리지 서비스 (<code>Cloudflare R2</code>, <code>MinlO</code> 등)가 S3와 동일한 <code>RESTful API</code>규격을 따름. <code>aws-sdk</code> 라이브러리를 그대로 사용하면서 엔드포인트 URL만 바꾸면 서비스 이동 가능. </p>
 </div>
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<p><strong>keyword: </strong><code>Edge Functions</code><strong> </strong></p><p>전 세계에 분산된 엣지 노드에서 실행되는 서버리스 함수. 기존 <code>Lambda(Node.js)</code> 보다 가벼운 <code>V8</code> 엔진을 사용.  </p>
+</div>
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<p><strong>keyword: </strong><code>PostgREST</code><strong> </strong></p><p><code>PostgreSQL</code> 데이터베이스 스키마를 읽어 표준 <code>RESTful API</code>를 자동으로 생성해주는 웹 서버. 단순 CRUD 코드를 작성할 필요를 없애고 <code>GET /users?id=eq.1</code> 쿼리를 SQL로 자동 변환. <code>RLS</code>와 결헙하여 백엔드 로직 없이도 DB레벨에서 보안 및 권한 제어 수행. 복잡한 비즈니스 로직이 없는 서비스라면 이것만으로 별도 백엔드 서버 없이 풀스택 개발 가능.</p>
+</div>
+
+## 3-3. Row Level Security 
+
+`RLS`라고 약칭한다. 테이블의 각 행에 대한 접근 권한을 정책으로 정의하는데, `Supabase`가 클라이언트에서 직접 DB에 쿼리를 날릴 수 있는 구조`PostgREST`를 제공하기 때문에 발생할 수 있는 보안 취약점을 방지한다. 
