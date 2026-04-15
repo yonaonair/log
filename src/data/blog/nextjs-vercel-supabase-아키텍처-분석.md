@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:37:50.096Z
+modDatetime: 2026-04-15T02:41:41.353Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -10,7 +10,7 @@ tags: []
 ---
 > 배포에 성공하기는 쉬웠다. 무수한 가이드가 인터넷에 있고 AI가 비약적인 발전을 거듭하는 시대니까. 하지만 알고 쓰지 않으면 잘 쓴 건지, 의도한 바에 일치하는지 점검할 수 없다. 그래서 글을 남겨둔다.
 
-1. PaaS vs Baas
+# 1. PaaS vs Baas
 
 매번 헷갈리는 `Iaas / Pass / BaaS, / Saas`. 다시 한 번 정리해보자.
 
@@ -26,9 +26,9 @@ tags: []
 - `Paas - Vercel/Netlify` : 서버 세팅 없이 코드만 올리면 배포된다 → 내부적으로는 복잡한 인프라가 자동 작동중 
 - `Baas - Supabase ` : `PostgreSQL` 에서 데이터베이스, 인증, 스토리지, 엣지 함수를 하나의 인터페이스로 제공하여 서버를 직접 구성하지 않아도 된다. 
 
-2. Severless 배포 
+# 2. Severless 배포 
 
-2-1. 정적 자산이 전세계에 배포되는 방법
+## 2-1. 정적 자산이 전세계에 배포되는 방법
 
 `Vercel` 이나 `Netlify`에 `Next.js` 프로젝트를 푸시하면 내부적으로 일어나는 과정이 있다. 
 
@@ -44,6 +44,13 @@ tags: []
 
 전 세계 여러 지역에 분산된 서버 노드들의 네트워크. 사용자가 어떤 사이트에 접속하면 미국 원본 서버까지 가지 않고 가장 가까운 곳의 엣지 노드에서 정적 파일을 받아온다. 
 
-/mermaid 다이어그램 
-
 `Vercel`은 `Edge Network`를 통해 100개 이상의 리전에 자산을 배포한다. ` Cash-Control`  헤더를 잘 설정하면 앳지 케시 히트율을 올릴 수 있고 결과적으로 원본 서버 부하의 속도를 줄이기 때문에 응답 속도가 빨라진다. 
+
+## 2-2. 서버리스 함수 (Serverless Function)의 작동방식 
+
+`Next.js`의 `API Routes`나 `Server Actions`는 `Vercel / Netlify`에서 서버리스 함수로 실행되는데, 이것은 전통적인 의미, 즉 항상 켜져있는 서버와는 다르다. 
+
+| 구분 |  |  |
+| --- | --- | --- |
+|  |  |  |
+|  |  |  |
