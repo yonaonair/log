@@ -37,7 +37,8 @@
       "Bash(npm run:*)",
       "Bash(npm config:*)",
       "Bash(git:*)",
-      "Bash(find node_modules/@tiptap/extension-image -name \"*.js\" -exec grep -l \"inline\\\\|group\" {} \\\\;)"
+      "Bash(find node_modules/@tiptap/extension-image -name \"*.js\" -exec grep -l \"inline\\\\|group\" {} \\\\;)",
+      "Bash(node -e \"const t = require\\('@tiptap/core'\\); console.log\\(typeof t.markInputRule, Object.keys\\(t\\).filter\\(k=>k.includes\\('Rule'\\)\\).join\\(', '\\)\\)\")"
     ]
   }
 }
