@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T05:15:10.193Z
+modDatetime: 2026-04-15T05:16:43.279Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -183,4 +183,8 @@ server {
 
 <div color="red" data-type="callout" data-color="red" class="callout callout-red">
 <p><strong>Nginx 리버스 프록시</strong></p><p>사용자가 직접 3001 포트 <code>Node.js</code>로 접속하게 하지 않고 <code>Nginx</code> 라는 문지기 앞에 세우는 이유 </p><p>(1) <code>SSL Termination</code> </p><p>암호화된 통신 <code>HTTPS</code>를 해독하는 작업은 연산량이 많다. 이걸 <code>Node.js</code>가 직접하면 메인이 되는 비즈니스 로직 처리가 느려짐. 고성능인 <code>Nginx</code>가 암호화를 풀어서 <code>Node.js</code>에게는 가벼운 <code>HTTP</code>로 전달해주는 구조 </p><p>(2) 보안 (추상화) </p><p>실제 서비스가 돌아가는 포트를 외부에 직접 노출하지 않으면 공격자는 <code>Nginx (80/443)</code>만 볼 수 있기 때문에 내부 구조를 알 수 없다 </p><p>(3) 로드 밸런싱 및 정적 파일 서빙</p><p>나중에 서버가 커져서 <code>Node.js</code> 앱을 여러 개 띄울 때 <code>Nginx</code>가 트래픽을 골고루 나눠주는 역할을 하게 됩 </p>
+</div>
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<p>keyword: 프록시 Proxy </p><p>대리인이라는 뜻의 단어. “누구를” 대신하느냐에 따라 이름이 바뀜. </p><ul class="tight" data-tight="true"><li><p>포워드 프록시 Forward proxy </p></li><li><p>클라이언트가 외부 인</p></li></ul>
 </div>
