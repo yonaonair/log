@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T05:23:03.527Z
+modDatetime: 2026-04-15T06:20:59.022Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: false
