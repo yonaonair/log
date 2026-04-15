@@ -9,6 +9,16 @@
   unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
 }
 
+/* Interop — Korean range only (Latin falls back to Ubuntu Mono) */
+@font-face {
+  font-family: 'Interop';
+  src: url('https://raw.githubusercontent.com/payw-org/Interop/main/web/fonts/Interop-Regular.woff2') format('woff2'),
+       url('https://raw.githubusercontent.com/payw-org/Interop/main/web/fonts/Interop-Regular.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
 /* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -671,12 +681,30 @@
 .prose-editor s { text-decoration: line-through; color: #999; }
 
 .prose-editor code {
-  font-family: 'CloudSansCode', 'Ubuntu Mono', ui-monospace, monospace;
+  font-family: 'Ubuntu Mono', 'Interop', ui-monospace, monospace;
   font-size: .875em;
   padding: .15em .4em;
   background: #f3f3f3;
   border-radius: 4px;
   color: #c7254e;
+}
+
+/* ─── Quote Highlight Marks ──────────────────────────────────────────────── */
+.hl-yellow {
+  font-family: 'Ubuntu Mono', 'Interop', ui-monospace, monospace;
+  font-size: .875em;
+  padding: .15em .4em;
+  background: #fef9c3;
+  color: #dc2626;
+  border-radius: 4px;
+}
+.hl-blue {
+  font-family: 'Ubuntu Mono', 'Interop', ui-monospace, monospace;
+  font-size: .875em;
+  padding: .15em .4em;
+  background: #dbeafe;
+  color: #2563eb;
+  border-radius: 4px;
 }
 
 .prose-editor mark {
@@ -695,7 +723,7 @@
 }
 
 .prose-editor pre code {
-  font-family: 'CloudSansCode', 'Ubuntu Mono', ui-monospace, monospace;
+  font-family: 'Ubuntu Mono', 'Interop', ui-monospace, monospace;
   background: none;
   color: #abb2bf;
   font-size: .875em;

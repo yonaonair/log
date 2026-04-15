@@ -35,7 +35,7 @@ import { common, createLowlight } from "lowlight";
 import { Markdown } from "tiptap-markdown";
 import { MessageBubble } from "./extensions/MessageBubble";
 import { Callout } from "./extensions/Callout";
-import { YellowHighlightRule } from "./extensions/YellowHighlightRule";
+import { HlYellow, HlBlue } from "./extensions/YellowHighlightRule";
 import {
   SlashCommands,
   getSlashCommands,
@@ -229,7 +229,8 @@ export default function AboutEditor() {
       WikiLink,
       TabIndent,
       MarkdownTypingRules,
-      YellowHighlightRule,
+      HlYellow,
+      HlBlue,
       SlashCommands.configure({
         suggestion: {
           char: "/",

@@ -24,7 +24,7 @@ import TableToolbar from "./TableToolbar";
 import { MessageBubble } from "./extensions/MessageBubble";
 import { Bookmark } from "./extensions/Bookmark";
 import { Callout } from "./extensions/Callout";
-import { YellowHighlightRule } from "./extensions/YellowHighlightRule";
+import { HlYellow, HlBlue } from "./extensions/YellowHighlightRule";
 import {
   SlashCommands,
   getSlashCommands,
@@ -378,7 +378,8 @@ export default function Editor({
       Annotation,
       WikiLink,
       TabIndent,
-      YellowHighlightRule,
+      HlYellow,
+      HlBlue,
       SlashCommands.configure({
         suggestion: {
           char: "/",
