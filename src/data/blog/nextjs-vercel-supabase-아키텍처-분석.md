@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:46:58.300Z
+modDatetime: 2026-04-15T02:50:10.981Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -53,3 +53,11 @@ tags: []
 <table style="min-width: 75px;">
 <colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th colspan="1" rowspan="1"><p>구분</p></th><th colspan="1" rowspan="1"><p>전통 서버</p></th><th colspan="1" rowspan="1"><p>서버리스 함수</p></th></tr><tr><td colspan="1" rowspan="1"><p>실행방식</p></td><td colspan="1" rowspan="1"><p>항상 대기중 </p></td><td colspan="1" rowspan="1"><p>요청이 들어올 때만 실행 </p></td></tr><tr><td colspan="1" rowspan="1"><p>비용 </p></td><td colspan="1" rowspan="1"><p>고정 </p><ul class="tight" data-tight="true"><li><p>서버 운영 시간</p></li></ul></td><td colspan="1" rowspan="1"><p>종량제 </p><ul class="tight" data-tight="true"><li><p>실행 횟수 * 실행 시간 </p></li></ul></td></tr><tr><td colspan="1" rowspan="1"><p>상태 <code>State</code> </p></td><td colspan="1" rowspan="1"><p>메모리에 유지 OK</p></td><td colspan="1" rowspan="1"><p>요청마다 새 인스턴스 생성, 무상태 <code>state</code> (Statless) 구조</p></td></tr><tr><td colspan="1" rowspan="1"><p>콜드 스타트</p></td><td colspan="1" rowspan="1"><p>없음</p></td><td colspan="1" rowspan="1"><p>있음 </p><ul class="tight" data-tight="true"><li><p>첫 요청 시 지연</p></li></ul></td></tr><tr><td colspan="1" rowspan="1"><p>스케일링 </p></td><td colspan="1" rowspan="1"><p>수동 또는 오토스케일링 필요</p></td><td colspan="1" rowspan="1"><p>자동 </p><ul class="tight" data-tight="true"><li><p>프레픽에 따라 인스턴스 복제</p></li></ul></td></tr></tbody>
 </table>
+
+# 3. Managed 서비스의 이름
+
+- AWS EC2`에서 P `PostgreSQL을 직접 설치해서 운영한다면 직접 처리해야 하는 일들: 
+
+<div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
+<p>(1) OS  업데이트 및 보안 패치 </p><p>(2} </p>
+</div>
