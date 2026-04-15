@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:56:39.732Z
+modDatetime: 2026-04-15T02:58:31.140Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -65,3 +65,5 @@ tags: []
 소규모 프로젝트에서 이러한 진행은 비효율적이다. 모든 것을 관리해야 하기 때문이다. 
 
 ## 3-2. Supabase가 추상화하는 것들 
+
+Supabase 는 `GpostgreSQL`을 기반으로 하면서도 운영 부담을 플랫폼 수준에서 처리해준다. 개발자가 직접 다루는 레이어는 스키마 설계와 쿼리 뿐이다. 
