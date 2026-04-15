@@ -38,7 +38,11 @@
       "Bash(npm config:*)",
       "Bash(git:*)",
       "Bash(find node_modules/@tiptap/extension-image -name \"*.js\" -exec grep -l \"inline\\\\|group\" {} \\\\;)",
-      "Bash(node -e \"const t = require\\('@tiptap/core'\\); console.log\\(typeof t.markInputRule, Object.keys\\(t\\).filter\\(k=>k.includes\\('Rule'\\)\\).join\\(', '\\)\\)\")"
+      "Bash(node -e \"const t = require\\('@tiptap/core'\\); console.log\\(typeof t.markInputRule, Object.keys\\(t\\).filter\\(k=>k.includes\\('Rule'\\)\\).join\\(', '\\)\\)\")",
+      "Bash(sed -n '754,760p' g:/workspace/red-ring/public/admin.css)",
+      "Bash(sed -n '1620,1660p' g:/workspace/red-ring/public/admin.css)",
+      "Bash(node -e \"const t = require\\('@tiptap/extension-table'\\); console.log\\(Object.keys\\(t\\)\\)\")",
+      "Bash(node -e \"const { Table } = require\\('@tiptap/extension-table'\\); const t = Table.configure\\({ resizable: true }\\); console.log\\('ok'\\)\")"
     ]
   }
 }

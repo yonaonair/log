@@ -45,30 +45,48 @@ export default defineConfig({
     plugins: [
       tailwindcss(),
       {
-        name: "keystatic-rolldown-compat",
+        name: "vite6-env-plugin-compat",
         enforce: "pre",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         configResolved(config: any) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const allPlugins: any[] = config.plugins ?? [];
-
           for (const plugin of allPlugins) {
-            if (!plugin?.name?.includes("keystatic")) continue;
-            if (!plugin.resolveId) continue;
-            const orig = plugin.resolveId;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            plugin.resolveId = async function (this: unknown, ...args: any[]) {
-              const fn = typeof orig === "function" ? orig : orig.handler;
-              const result = await fn.call(this, ...args);
-              if (
-                result &&
-                typeof result === "object" &&
-                typeof result.id === "string"
-              ) {
-                return result.id;
+            if (!plugin || typeof plugin !== "object") continue;
+
+            // 훅 객체 → 함수 unwrap
+            for (const hookName of [
+              "resolveId",
+              "transform",
+              "load",
+            ] as const) {
+              const hook = plugin[hookName];
+              if (!hook || typeof hook === "function") continue;
+              if (typeof hook.handler === "function") {
+                plugin[hookName] = hook.handler;
               }
-              return result;
-            };
+            }
+
+            // MDX 플러그인이 가상 모듈을 파싱하지 않도록 패치
+            if (plugin.name?.includes("mdx") && plugin.transform) {
+              const origTransform = plugin.transform;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              plugin.transform = async function (
+                this: unknown,
+                code: string,
+                id: string,
+                ...args: any[]
+              ) {
+                if (
+                  id.startsWith("\0") ||
+                  id.startsWith("virtual:") ||
+                  id.includes("astro:")
+                ) {
+                  return null;
+                }
+                return origTransform.call(this, code, id, ...args);
+              };
+            }
           }
         },
       },
