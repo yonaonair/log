@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:24:22.723Z
+modDatetime: 2026-04-15T02:26:08.925Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -31,6 +31,3 @@ tags: []
 2-1. 정적 자산이 전세계에 배포되는 방법
 
 `Vercel` 이나 `Netlify`에 `Next.js` 프로젝트를 푸시하면 내부적으로 일어나는 과정이 있다. 
-
-```
-```
