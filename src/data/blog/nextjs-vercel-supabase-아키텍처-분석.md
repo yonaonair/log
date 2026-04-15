@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:33:16.261Z
+modDatetime: 2026-04-15T02:37:28.673Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -34,6 +34,10 @@ tags: []
 
 <div color="blue" data-type="callout" data-color="blue" class="callout callout-blue">
 <p>(1) Git push → CI/CD 파이프라인 트리거 </p><p>(2) 빌드 서버에서 <code>next build</code> 실행 </p><p>(3) 결과물 분류 : </p><ul class="tight" data-tight="true"><li><p><code>/public</code> 및 <code>.next/static</code> → 정적 자산 (HTML, CSS, JS, 이미지) </p></li><li><p><code>API Routes / Server Components</code> → 서버리스 함수 (Lambda-like) </p></li></ul><p>(4) 정적 자산 → <code>CDN (Content Delivery Network)</code> 엣지 노드 전체에 복제 </p><p>(5) 서버리스 함수 → 요청이 들어올 때마다 실행 (<code>cold start</code> 발생 가능)</p>
+</div>
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<p>keyword: 콜드스타트 (cold start) <br><br>서버리스 함수는 일정 시간 요청이 없으면 실행환경 또는 컨테이너가 내려간다. 새 요청이 들어오면 환경을 재부팅하는데 수백ms에서 수초까지 걸린다. <code>Vercel Edge Functions</code>는 <code>V8 isolate</code> 기반인데 코드스타터가 매우 짧지만 <code>Node.js</code> 런타임 기반 함수는 상대적으로 길다. </p>
 </div>
 
 ### CDN (Content Delivery Network) 
