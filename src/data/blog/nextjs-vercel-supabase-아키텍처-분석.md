@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:09:42.350Z
+modDatetime: 2026-04-15T02:19:06.057Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -21,4 +21,4 @@ tags: []
 | Baas | Backend as a suevice | 프론트엔드 로직만 | `Supabase`, `Firebase` |
 | SaaS | Software as a Service | 설정만 | `Notion`, `Slack` |
 
-추상화 수준이 높아질수록, 그러니까 `IaaS → PaaS → Baas → SaaS` 순서로 내려갈 수록 플랫폼은 더 많은 것을 대신 처리하고 개발자가 직접 관리해야 하는 범위는 좁아진다. 닫른 말로 ‘플랫폼에 대한 의존도가 높아진다 라고 말하기도 한다. ‘rkdwh’ 
+추상화 수준이 높아질수록, 그러니까 `IaaS → PaaS → Baas → SaaS` 순서로 내려갈 수록 플랫폼은 더 많은 것을 대신 처리하고 개발자가 직접 관리해야 하는 범위는 좁아진다. 닫른 말로 ‘플랫폼에 대한 의존도가 높아진다 라고 말하기도 한다. 
