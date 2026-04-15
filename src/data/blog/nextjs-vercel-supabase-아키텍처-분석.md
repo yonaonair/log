@@ -2,7 +2,7 @@
 title: '`Next.js`, `Vercel`, `Supabase` 아키텍처 분석'
 description: '알고 쓰자 '
 pubDatetime: 2026-04-15T01:22:51.860Z
-modDatetime: 2026-04-15T02:58:31.140Z
+modDatetime: 2026-04-15T03:00:03.622Z
 slug: nextjs-vercel-supabase-아키텍처-분석
 featured: false
 draft: true
@@ -67,3 +67,7 @@ tags: []
 ## 3-2. Supabase가 추상화하는 것들 
 
 Supabase 는 `GpostgreSQL`을 기반으로 하면서도 운영 부담을 플랫폼 수준에서 처리해준다. 개발자가 직접 다루는 레이어는 스키마 설계와 쿼리 뿐이다. 
+
+<div color="yellow" data-type="callout" data-color="yellow" class="callout callout-yellow">
+<h3>Supabase 제공 기능</h3><p>(1) PostgreSQL (managed) </p>
+</div>
