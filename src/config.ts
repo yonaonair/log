@@ -3,7 +3,7 @@ export const SITE = {
   author: "yona",
   profile: "https://github.com/yonaonair",
   desc: "",
-  title: "all about love",
+  title: "art of loving",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
