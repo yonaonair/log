@@ -27,23 +27,96 @@
     }
 
     a {
-      @apply wrap-break-word text-foreground decoration-dashed underline-offset-4 hover:text-accent focus-visible:no-underline;
+      @apply wrap-break-word text-accent underline underline-offset-[2px] focus-visible:no-underline;
     }
 
     ul {
       @apply overflow-x-clip;
+      padding-left: 1.6em;
+      list-style-type: "▪  ";
+    }
+
+    ul ul {
+      list-style-type: "▫  ";
+    }
+
+    ul ul ul {
+      list-style-type: "▸  ";
+    }
+
+    ul ul ul ul {
+      list-style-type: "▹  ";
+    }
+
+    /* OL: prose-editor ol과 동일한 3계층 순환 */
+    ol {
+      list-style-type: none;
+      counter-reset: prose-ol-counter;
+      padding-left: 1.6em;
+    }
+
+    ol ol {
+      margin: 0.3em 0;
+    }
+
+    ol li {
+      position: relative;
+      counter-increment: prose-ol-counter;
+    }
+
+    ol li::before {
+      position: absolute;
+      left: -1.6em;
+      width: 1.4em;
+      text-align: left;
+    }
+
+    /* 1계층, 4계층: 아라비아 숫자 */
+    ol > li::before,
+    ol ol ol ol > li::before {
+      content: counter(prose-ol-counter) ". ";
+    }
+
+    /* 2계층, 5계층: 동그라미 숫자 ❶❷❸ */
+    ol ol > li::before,
+    ol ol ol ol ol > li::before {
+      content: counter(prose-ol-counter, black-circled-editor);
+    }
+
+    /* 3계층, 6계층: 괄호 숫자 (1)(2)(3) */
+    ol ol ol > li::before,
+    ol ol ol ol ol ol > li::before {
+      content: "(" counter(prose-ol-counter) ")";
     }
 
     li {
-      @apply marker:text-accent;
+      margin: 0.25em 0;
+      line-height: 1.7;
+    }
+
+    li p {
+      margin: 0;
     }
 
     hr {
-      @apply border-border;
+      border: none;
+      border-top: 1.5px solid var(--color-border);
     }
 
     img {
-      @apply mx-auto border border-border;
+      @apply mx-auto rounded-lg;
+      max-width: 100%;
+    }
+
+    mark {
+      background: #fef08a;
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+    html[data-theme="dark"] mark {
+      background: #713f12;
+      color: #fef9c3;
     }
 
     figcaption {
@@ -61,6 +134,7 @@
         th {
           @apply px-4 py-3 text-left font-semibold text-foreground/90;
           background: color-mix(in srgb, var(--color-foreground) 4%, transparent);
+          white-space: nowrap;
         }
       }
 
@@ -76,6 +150,22 @@
         }
         td {
           @apply px-4 py-3 align-top text-foreground/85;
+          white-space: nowrap;
+
+          ul,
+          ol {
+            white-space: normal;
+            overflow-x: visible;
+            padding-left: 1.6em;
+            margin: 0.25em 0;
+          }
+          ul { list-style-type: "▪  "; }
+          ul ul { list-style-type: "▫  "; }
+          ul ul ul { list-style-type: "▸  "; }
+          li {
+            margin: 0.25em 0;
+            line-height: 1.7;
+          }
         }
       }
 
@@ -85,7 +175,9 @@
     }
 
     code {
-      @apply rounded bg-muted/75 p-1 wrap-break-word text-foreground before:content-none after:content-none;
+      @apply rounded bg-muted/75 wrap-break-word text-foreground before:content-none after:content-none;
+      font-size: 0.875em;
+      padding: 0.15em 0.4em;
     }
 
     /* ===== Quote Highlight Marks ===== */
@@ -119,7 +211,10 @@
     }
 
     blockquote {
-      @apply border-s-accent/80 wrap-break-word opacity-80;
+      @apply wrap-break-word not-italic;
+      border-inline-start: 3px solid var(--color-border);
+      padding-inline-start: 1.2em;
+      color: color-mix(in srgb, var(--color-foreground) 65%, transparent);
     }
 
     details {
@@ -188,19 +283,18 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply block border text-[0.875rem] outline-border; /* 텍스트 크기 일관성 확보 */
-    background-color: var(--shiki-light-bg) !important;
-    color: var(--shiki-light) !important;
-    line-height: 1.4 !important; /* [수정 핵심] 강제 여백 제거 및 줄간격 조밀하게 설정 */
+    @apply block border text-[0.875rem] outline-border;
+    background-color: #f5f5f5 !important;
+    line-height: 1.4 !important;
   }
 
+  /* per-token syntax colors from Shiki dual-theme (defaultColor: false) */
   .astro-code span {
     color: var(--shiki-light) !important;
   }
 
   html[data-theme="dark"] .astro-code {
     background-color: var(--shiki-dark-bg) !important;
-    color: var(--shiki-dark) !important;
   }
 
   html[data-theme="dark"] .astro-code span {

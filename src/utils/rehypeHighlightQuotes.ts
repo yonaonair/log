@@ -1,13 +1,6 @@
-import { visit } from "unist-util-visit";
 import type { Root, Text, Element } from "hast";
 
 const FORBIDDEN_TAGS = new Set(["code", "pre", "script", "style"]);
-
-function isInsideForbidden(ancestors: (Root | Element)[]): boolean {
-  return ancestors.some(
-    a => "tagName" in a && FORBIDDEN_TAGS.has((a as Element).tagName)
-  );
-}
 
 function makeSpan(className: string, text: string): Element {
   return {
@@ -20,7 +13,6 @@ function makeSpan(className: string, text: string): Element {
 
 function splitTextNode(value: string): (Text | Element)[] {
   const parts: (Text | Element)[] = [];
-  // Match "double-quoted" → hl-yellow  OR  'single-quoted' → hl-blue
   const pattern = /"([^"\n]+)"|'([^'\n]+)'/g;
   let last = 0;
   let m: RegExpExecArray | null;
@@ -41,27 +33,34 @@ function splitTextNode(value: string): (Text | Element)[] {
   return parts;
 }
 
+function processNode(node: Root | Element, insideForbidden: boolean): void {
+  const children = node.children as (Root | Element | Text)[];
+  let i = 0;
+  while (i < children.length) {
+    const child = children[i];
+    if (child.type === "element") {
+      const el = child as Element;
+      processNode(el, insideForbidden || FORBIDDEN_TAGS.has(el.tagName));
+      i++;
+    } else if (child.type === "text" && !insideForbidden) {
+      const textNode = child as Text;
+      if (/"[^"\n]+"/.test(textNode.value) || /'[^'\n]+'/.test(textNode.value)) {
+        const replacement = splitTextNode(textNode.value);
+        if (!(replacement.length === 1 && replacement[0].type === "text")) {
+          (children as unknown[]).splice(i, 1, ...replacement);
+          i += replacement.length;
+          continue;
+        }
+      }
+      i++;
+    } else {
+      i++;
+    }
+  }
+}
+
 export function rehypeHighlightQuotes() {
   return (tree: Root) => {
-    visit(tree, "text", (node: Text, index, parent) => {
-      if (index == null || !parent) return;
-      if (isInsideForbidden([] as any)) return;
-
-      // Check immediate parent only (visit gives us the parent)
-      if (
-        parent.type === "element" &&
-        FORBIDDEN_TAGS.has((parent as unknown as Element).tagName)
-      )
-        return;
-
-      if (!/"[^"\n]+"/.test(node.value) && !/'[^'\n]+'/.test(node.value))
-        return;
-
-      const replacement = splitTextNode(node.value);
-      if (replacement.length === 1 && replacement[0].type === "text") return;
-
-      (parent as any).children.splice(index, 1, ...replacement);
-      return index + replacement.length;
-    });
+    processNode(tree, false);
   };
 }

@@ -69,7 +69,9 @@
       "Bash(curl -s -m 5 -o /dev/null -w \"HTTP %{http_code}\" http://localhost:4342/)",
       "Bash(curl -s -m 10 http://localhost:4342/posts/)",
       "Bash(curl -s -m 10 -o /dev/null -w \"%{http_code}\" http://localhost:4342/posts/)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(pnpm install *)",
+      "Bash(node -e \"const s = require\\('@tailwindcss/typography/src/styles'\\); const base = s.DEFAULT.css[0]; const keys = Object.keys\\(base\\).filter\\(k => k.includes\\('ul'\\) || k.includes\\('ol'\\) || k.includes\\('li'\\)\\); keys.forEach\\(k => console.log\\(k, JSON.stringify\\(base[k]\\)\\)\\);\")"
     ]
   }
 }
