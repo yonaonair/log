@@ -30,11 +30,17 @@ export const MarkdownTypingRules = Extension.create({
             .run();
         },
       }),
-      // => → →  (화살표 자동 변환)
+      // -> → →   => → ⇒  (화살표 자동 변환)
+      new InputRule({
+        find: /->$/,
+        handler: ({ chain, range }) => {
+          chain().deleteRange(range).insertContent("→").run();
+        },
+      }),
       new InputRule({
         find: /=>$/,
         handler: ({ chain, range }) => {
-          chain().deleteRange(range).insertContent("→").run();
+          chain().deleteRange(range).insertContent("⇒").run();
         },
       }),
     ];

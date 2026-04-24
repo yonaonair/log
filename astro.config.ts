@@ -9,6 +9,7 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
+import { rehypeHighlightQuotes } from "./src/utils/rehypeHighlightQuotes";
 import { SITE } from "./src/config";
 import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
@@ -29,6 +30,7 @@ export default defineConfig({
   ],
   markdown: {
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
+    rehypePlugins: [rehypeHighlightQuotes],
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },
       defaultColor: false,

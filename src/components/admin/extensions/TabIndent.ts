@@ -23,9 +23,10 @@ export const TabIndent = Extension.create({
         if (editor.isActive("tableCell") || editor.isActive("tableHeader")) {
           return false;
         }
-        // Inside list → indent
+        // Inside list → indent (always consume the event to prevent focus escape)
         if (editor.isActive("listItem")) {
-          return editor.commands.sinkListItem("listItem");
+          editor.commands.sinkListItem("listItem");
+          return true;
         }
         // Otherwise → 4 spaces
         return editor.commands.insertContent("    ");
@@ -36,7 +37,8 @@ export const TabIndent = Extension.create({
           return false;
         }
         if (editor.isActive("listItem")) {
-          return editor.commands.liftListItem("listItem");
+          editor.commands.liftListItem("listItem");
+          return true;
         }
         return true;
       },

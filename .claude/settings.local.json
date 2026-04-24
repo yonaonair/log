@@ -68,7 +68,8 @@
       "Bash(curl -s -m 10 http://localhost:4341/)",
       "Bash(curl -s -m 5 -o /dev/null -w \"HTTP %{http_code}\" http://localhost:4342/)",
       "Bash(curl -s -m 10 http://localhost:4342/posts/)",
-      "Bash(curl -s -m 10 -o /dev/null -w \"%{http_code}\" http://localhost:4342/posts/)"
+      "Bash(curl -s -m 10 -o /dev/null -w \"%{http_code}\" http://localhost:4342/posts/)",
+      "Bash(xargs grep *)"
     ]
   }
 }

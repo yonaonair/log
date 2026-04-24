@@ -148,7 +148,10 @@ function ResizableImageView({
                 key={a}
                 onMouseDown={e => {
                   e.preventDefault();
-                  updateAttributes({ align: align === a ? null : a });
+                  const newAlign = align === a ? null : a;
+                  updateAttributes({ align: newAlign });
+                  // 단락 text-align을 함께 변경해야 인라인 이미지가 실제로 정렬됨
+                  editor.chain().setTextAlign(newAlign ?? "left").run();
                 }}
                 title={a === "left" ? "왼쪽" : a === "center" ? "가운데" : "오른쪽"}
                 style={{
@@ -220,9 +223,9 @@ export const ResizableImage = Image.extend({
           const { src, alt, title, width, align } = node.attrs;
           if (width || align) {
             let styleVal = "";
-            if (align === "center") styleVal = "display:inline-block;margin:0 auto";
-            else if (align === "right") styleVal = "display:inline-block;margin-left:auto";
-            else if (align === "left") styleVal = "display:inline-block;margin-right:auto";
+            if (align === "center") styleVal = "display:block;margin:0 auto";
+            else if (align === "right") styleVal = "display:block;margin-left:auto";
+            else if (align === "left") styleVal = "display:block;margin-right:auto";
             const attrStr = [
               `src="${src}"`,
               alt ? `alt="${alt}"` : "",
