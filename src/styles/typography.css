@@ -180,32 +180,6 @@
       padding: 0.15em 0.4em;
     }
 
-    /* ===== Quote Highlight Marks ===== */
-    .hl-yellow {
-      font-family: var(--font-orbit);
-      font-size: 0.875em;
-      padding: 0.15em 0.4em;
-      background: #fef9c3;
-      color: #dc2626;
-      border-radius: 4px;
-    }
-    html[data-theme="dark"] .hl-yellow {
-      background: #422006;
-      color: #fca5a5;
-    }
-    .hl-blue {
-      font-family: var(--font-orbit);
-      font-size: 0.875em;
-      padding: 0.15em 0.4em;
-      background: #dbeafe;
-      color: #2563eb;
-      border-radius: 4px;
-    }
-    html[data-theme="dark"] .hl-blue {
-      background: #1e3a5f;
-      color: #93c5fd;
-    }
-
     .astro-code code {
       @apply flex-[1_0_100%] bg-inherit p-0;
     }
@@ -281,6 +255,32 @@
     }
   }
 
+  /* ===== Quote Highlight Marks ===== */
+  .hl-yellow {
+    font-family: var(--font-orbit);
+    font-size: 0.875em;
+    padding: 0.15em 0.4em;
+    background: #fef9c3;
+    color: #dc2626;
+    border-radius: 4px;
+  }
+  html[data-theme="dark"] .hl-yellow {
+    background: #422006;
+    color: #fca5a5;
+  }
+  .hl-blue {
+    font-family: var(--font-orbit);
+    font-size: 0.875em;
+    padding: 0.15em 0.4em;
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 4px;
+  }
+  html[data-theme="dark"] .hl-blue {
+    background: #1e3a5f;
+    color: #93c5fd;
+  }
+
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
     @apply block border text-[0.875rem] outline-border;
@@ -288,9 +288,9 @@
     line-height: 1.4 !important;
   }
 
-  /* per-token syntax colors from Shiki dual-theme (defaultColor: false) */
-  .astro-code span {
-    color: var(--shiki-light) !important;
+  /* DIAGNOSTIC: force span color to see if CSS override works */
+  .astro-code span[style] {
+    outline: 2px solid red !important;
   }
 
   html[data-theme="dark"] .astro-code {

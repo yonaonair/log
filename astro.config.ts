@@ -33,7 +33,7 @@ export default defineConfig({
     rehypePlugins: [rehypeHighlightQuotes],
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },
-      defaultColor: false,
+      defaultColor: "light",
       wrap: false,
       transformers: [
         transformerFileName({ style: "v2", hideDot: false }),

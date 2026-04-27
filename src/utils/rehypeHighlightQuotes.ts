@@ -11,9 +11,14 @@ function makeSpan(className: string, text: string): Element {
   };
 }
 
+// Matches both ASCII quotes ("...") and typographic curly quotes (“…” / ‘…’)
+const DOUBLE_QUOTE_RE = /["“]([^"“”\n]+)["”]/g;
+const SINGLE_QUOTE_RE = /['‘]([^'‘’\n]+)['’]/g;
+const EITHER_RE = /["“]([^"“”\n]+)["”]|['‘]([^'‘’\n]+)['’]/g;
+
 function splitTextNode(value: string): (Text | Element)[] {
   const parts: (Text | Element)[] = [];
-  const pattern = /"([^"\n]+)"|'([^'\n]+)'/g;
+  const pattern = new RegExp(EITHER_RE.source, "g");
   let last = 0;
   let m: RegExpExecArray | null;
   while ((m = pattern.exec(value)) !== null) {
@@ -33,6 +38,12 @@ function splitTextNode(value: string): (Text | Element)[] {
   return parts;
 }
 
+function hasQuotes(value: string): boolean {
+  DOUBLE_QUOTE_RE.lastIndex = 0;
+  SINGLE_QUOTE_RE.lastIndex = 0;
+  return DOUBLE_QUOTE_RE.test(value) || SINGLE_QUOTE_RE.test(value);
+}
+
 function processNode(node: Root | Element, insideForbidden: boolean): void {
   const children = node.children as (Root | Element | Text)[];
   let i = 0;
@@ -44,7 +55,7 @@ function processNode(node: Root | Element, insideForbidden: boolean): void {
       i++;
     } else if (child.type === "text" && !insideForbidden) {
       const textNode = child as Text;
-      if (/"[^"\n]+"/.test(textNode.value) || /'[^'\n]+'/.test(textNode.value)) {
+      if (hasQuotes(textNode.value)) {
         const replacement = splitTextNode(textNode.value);
         if (!(replacement.length === 1 && replacement[0].type === "text")) {
           (children as unknown[]).splice(i, 1, ...replacement);

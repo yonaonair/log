@@ -359,7 +359,12 @@ export default function Editor({
           return "글을 작성하거나 '/'를 입력해 블록을 삽입하세요…";
         },
       }),
-      Typography,
+      Typography.configure({
+        openDoubleQuote: false,
+        closeDoubleQuote: false,
+        openSingleQuote: false,
+        closeSingleQuote: false,
+      }),
       Underline,
       Highlight.configure({ multicolor: false }),
       Link.configure({ openOnClick: false }),
