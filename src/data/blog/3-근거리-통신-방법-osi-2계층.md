@@ -4,11 +4,13 @@ description: >-
   내 컴퓨터로부터 멀리 떨어진 컴퓨터오아 데이터를 주고 받으려면 일단 내 컴퓨터가 연결된 네트워크에서 인터넷으로 나갈 수 있는 네트워크 장치와
   통신해야한다.
 pubDatetime: 2026-04-22T01:45:35.894Z
-modDatetime: 2026-04-27T08:03:54.600Z
+modDatetime: 2026-04-27T08:17:56.433Z
 slug: 3-근거리-통신-방법-osi-2계층
 featured: false
-draft: true
+draft: false
 tags: []
+series: network
+category: Tech
 ---
 # 데이터 링크 계층
 
@@ -69,8 +71,21 @@ tags: []
   - `SFD` , start of frame delimiter 
     - 시작을 알려주는 마지막 `1byte` 
 
-### (1) MAC 주소 `6 bytes`
+만약 "A컴퓨터"가 'B컴퓨터'한테 데이터를 보낼 때, 
+
+"A 컴퓨터"와 같은 랜에 있으면서 경로상에 있는 `공유기`에 데이터를 전달한다면,
+
+### (1) 목적지 MAC 주소 `6 bytes`
+
+→ `공유기`의 MAC 주소 
 
 ### (2) 출발지 MAC 주소 `6 bytes` 
 
+→ "A 컴퓨터"의 MAC 주소 
+
 ### (3) 상위 프로토콜의 유형 `2 bytes` 
+
+- 데이터를 캡슐화할 때 사용한 3계층 프로토콜이 무엇인지 알려주는 역할\
+  → `ARP` 또는 `IPv4` 가 대표적 
+  - `ARP` : `0×0806`
+  - `IPv4` : `0×0800`
