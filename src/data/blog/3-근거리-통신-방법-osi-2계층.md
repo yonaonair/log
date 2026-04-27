@@ -4,7 +4,7 @@ description: >-
   내 컴퓨터로부터 멀리 떨어진 컴퓨터오아 데이터를 주고 받으려면 일단 내 컴퓨터가 연결된 네트워크에서 인터넷으로 나갈 수 있는 네트워크 장치와
   통신해야한다.
 pubDatetime: 2026-04-22T01:45:35.894Z
-modDatetime: 2026-04-27T06:06:34.264Z
+modDatetime: 2026-04-27T07:48:43.743Z
 slug: 3-근거리-통신-방법-osi-2계층
 featured: false
 draft: true
