@@ -4,7 +4,7 @@ description: >-
   내 컴퓨터로부터 멀리 떨어진 컴퓨터오아 데이터를 주고 받으려면 일단 내 컴퓨터가 연결된 네트워크에서 인터넷으로 나갈 수 있는 네트워크 장치와
   통신해야한다.
 pubDatetime: 2026-04-22T01:45:35.894Z
-modDatetime: 2026-04-27T07:59:40.279Z
+modDatetime: 2026-04-27T08:03:27.844Z
 slug: 3-근거리-통신-방법-osi-2계층
 featured: false
 draft: true
@@ -49,7 +49,7 @@ tags: []
 
     <div color="blue" data-type="callout" data-color="blue" class="callout callout-blue"><p>네트워크 인터페이스 카드 network interface card</p><ul class="tight" data-tight="true"><li><p>랜카드의 정식 명칭</p></li><li><p>과거에는 인터넷 사용자가 많지 않아 컴퓨터로 인터넷에 접속하려면 네트워크 인터페이스 카드를 추가해야 했음</p></li><li><p>요즘은 메인보드에 랜카드 기능이 대부분 기본으로 설치되어 있어서 별도 장착 없이 바로 인터넷 연결이 가능함</p></li></ul></div>
 
-## Ethernet 프로토콜
+## Ethernet 프로토콜 `총 14 bytes`
 
 - `MAC주소`를 이용해서 특정 장치에 데이터를 보내려면 주소를 작성할 양식이 필요. 
 
@@ -60,6 +60,17 @@ tags: []
 - `Ethernet Type` 부터 `Destination Address` 까지만 'Ethernet 프로토콜'
 - 그 앞은 `프리엠블`, 뒷부분은 페이로드에 담긴 `Data`. 
 
-### 프리엠블 preamble 
+### \
+(영역 외) 프리엠블 preamble 
 
-- 'Ethernet 프로토콜'이 
+- 'Ethernet 프로토콜'이 시작되는 지점을 알려주는 기능
+  - 전송의 동기화 및 시작을 알리기 위해 프레임(데이터 운반체) 단위별로 각 프레임의 맨 앞에 붙이는 영역 
+- 총 `8bytes`, `1010 1010`이 일곱번 반복하면서 (`7bytes`) 전기 신호를 보내는 쪽의 속도와 받는 쪽의 속도 동기화 → 마지막 `1byte`로 `1010 1011`을 전송 → 그 다음부터 `Ethernet 프로토콜`의 시작을 알림. 
+  - `SFD` , start of frame delimiter 
+    - 시작을 알려주는 마지막 `1byte` 
+
+### (1) MAC 주소 `6 bytes`
+
+### (2) 출발지 MAC 주소 `6 bytes` 
+
+### (3) 상위 프로토콜의 유형 `2 bytes` 
