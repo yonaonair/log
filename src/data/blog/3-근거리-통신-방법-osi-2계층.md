@@ -4,7 +4,7 @@ description: >-
   내 컴퓨터로부터 멀리 떨어진 컴퓨터오아 데이터를 주고 받으려면 일단 내 컴퓨터가 연결된 네트워크에서 인터넷으로 나갈 수 있는 네트워크 장치와
   통신해야한다.
 pubDatetime: 2026-04-22T01:45:35.894Z
-modDatetime: 2026-04-27T07:56:46.045Z
+modDatetime: 2026-04-27T07:59:40.279Z
 slug: 3-근거리-통신-방법-osi-2계층
 featured: false
 draft: true
@@ -54,3 +54,12 @@ tags: []
 - `MAC주소`를 이용해서 특정 장치에 데이터를 보내려면 주소를 작성할 양식이 필요. 
 
 - "OSI 2계층"에서 사용하는 `MAC 주소`를 작성하는 대표적인 양식은 'Ethernet 프로토콜'
+
+<img src="https://blog.kakaocdn.net/dna/SOuwr/btsB8VBGF2X/AAAAAAAAAAAAAAAAAAAAADFl1AoN2m1f5NdWG6X-eCWX7blrkL6GWbGfAp2ls8SN/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1777561199&allow_ip=&allow_referer=&signature=lJqH8IXaNPZ8Ikfu7cQ0RSfzBEU%3D" style="display:block;margin:0 auto">
+
+- `Ethernet Type` 부터 `Destination Address` 까지만 'Ethernet 프로토콜'
+- 그 앞은 `프리엠블`, 뒷부분은 페이로드에 담긴 `Data`. 
+
+### 프리엠블 preamble 
+
+- 'Ethernet 프로토콜'이 
