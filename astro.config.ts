@@ -3,13 +3,8 @@ import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
-import {
-  transformerNotationDiff,
-  transformerNotationHighlight,
-  transformerNotationWordHighlight,
-} from "@shikijs/transformers";
-import { transformerFileName } from "./src/utils/transformers/fileName";
 import { rehypeHighlightQuotes } from "./src/utils/rehypeHighlightQuotes";
+import { rehypeLowlight } from "./src/utils/rehypeLowlight";
 import { SITE } from "./src/config";
 import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
@@ -29,19 +24,9 @@ export default defineConfig({
     mdx(),
   ],
   markdown: {
+    syntaxHighlight: false,
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
-    rehypePlugins: [rehypeHighlightQuotes],
-    shikiConfig: {
-      themes: { light: "min-light", dark: "night-owl" },
-      defaultColor: "light",
-      wrap: false,
-      transformers: [
-        transformerFileName({ style: "v2", hideDot: false }),
-        transformerNotationHighlight(),
-        transformerNotationWordHighlight(),
-        transformerNotationDiff({ matchAlgorithm: "v3" }),
-      ],
-    },
+    rehypePlugins: [rehypeHighlightQuotes, rehypeLowlight],
   },
   vite: {
     plugins: [

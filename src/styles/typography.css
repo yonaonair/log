@@ -282,43 +282,17 @@
   }
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
-  .astro-code {
+  pre.hljs {
     @apply block border text-[0.875rem] outline-border;
-    background-color: #f5f5f5 !important;
     line-height: 1.4 !important;
+    border-radius: 6px;
   }
 
-  /* DIAGNOSTIC: force span color to see if CSS override works */
-  .astro-code span[style] {
-    outline: 2px solid red !important;
+  pre.hljs code {
+    @apply bg-transparent p-0;
+    color: inherit;
   }
 
-  html[data-theme="dark"] .astro-code {
-    background-color: var(--shiki-dark-bg) !important;
-  }
-
-  html[data-theme="dark"] .astro-code span {
-    color: var(--shiki-dark) !important;
-  }
-
-  .astro-code {
-    /* [수정 핵심] min-h 제거 및 inline-block을 통한 폰트 자체의 자연스러운 높이 유지 */
-    .line {
-      @apply inline-block min-h-[1.4em] w-full;
-    }
-    .line.diff.add {
-      @apply relative inline-block w-full bg-green-400/20 before:absolute before:-left-3 before:text-green-500 before:content-['+'];
-    }
-    .line.diff.remove {
-      @apply relative inline-block w-full bg-red-500/20 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
-    }
-    .line.highlighted {
-      @apply inline-block w-full bg-slate-400/20;
-    }
-    .highlighted-word {
-      @apply rounded-sm border border-border px-0.5 py-px;
-    }
-  }
 }
 
 /* [에디터 내부 순서 있는 목록(OL) 3단계 순환 스타일] */

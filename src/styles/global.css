@@ -1,6 +1,7 @@
 @import url("https://rsms.me/inter/inter.css");
 @import "tailwindcss";
 @import "./typography.css";
+@import "highlight.js/styles/atom-one-dark.css";
 
 /* ── Interop Font (Korean only — Latin falls back to Inter) ─────────────────── */
 @font-face {
